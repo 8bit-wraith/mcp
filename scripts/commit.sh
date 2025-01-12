@@ -1,33 +1,25 @@
 #!/bin/bash
 
-# 🎭 The Magical Git Commit Script 🎭
-# Approved by Trisha from Accounting! 
+# Colors for output
+PURPLE='\033[0;35m'
+GREEN='\033[0;32m'
+NC='\033[0m'
 
-if [ -z "$1" ]; then
-    echo "❌ Please provide a commit message!"
-    echo "Usage: ./commit.sh 'Your amazing commit message'"
+# Check if a commit message was provided
+if [ $# -eq 0 ]; then
+    echo -e "${PURPLE}Trisha says: We need a commit message! How else will we track our changes? 📝${NC}"
     exit 1
 fi
 
-# Fun prefix array
-PREFIXES=(
-    "🚀"
-    "✨"
-    "🎨"
-    "🔧"
-    "📝"
-    "🐛"
-    "🎉"
-)
-
-# Get random prefix
-RANDOM_PREFIX=${PREFIXES[$RANDOM % ${#PREFIXES[@]}]}
-
-# Add all changes
+# Trisha's pre-commit checklist
+echo -e "${PURPLE}Trisha's Pre-Commit Checklist:${NC}"
+echo -e "📋 Staging changes..."
 git add .
 
-# Commit with random prefix and message
-git commit -m "$RANDOM_PREFIX $1"
+echo -e "🔍 Checking what we're about to commit..."
+git status
 
-echo "🎉 Changes committed successfully!"
-echo "Trisha says: 'Great job on keeping the codebase clean!'" 
+echo -e "💫 Making it official..."
+git commit -m "$1"
+
+echo -e "${GREEN}Trisha says: Another beautiful commit in the books! 🎉${NC}" 
