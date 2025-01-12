@@ -1,25 +1,29 @@
 #!/bin/bash
 
-# Colors for output
-PURPLE='\033[0;35m'
+# Colors for pretty output
 GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
 NC='\033[0m'
 
 # Check if a commit message was provided
-if [ $# -eq 0 ]; then
-    echo -e "${PURPLE}Trisha says: We need a commit message! How else will we track our changes? 📝${NC}"
+if [ -z "$1" ]; then
+    echo -e "${PURPLE}Trisha says: Don't forget to tell me what we're committing! 📝${NC}"
     exit 1
 fi
 
-# Trisha's pre-commit checklist
-echo -e "${PURPLE}Trisha's Pre-Commit Checklist:${NC}"
-echo -e "📋 Staging changes..."
+echo -e "${BLUE}Trisha's Pre-Commit Checklist:${NC}"
+echo -e "${GREEN}📋 Staging changes...${NC}"
 git add .
 
-echo -e "🔍 Checking what we're about to commit..."
+echo -e "${GREEN}🔍 Checking what we're about to commit...${NC}"
 git status
 
-echo -e "💫 Making it official..."
+echo -e "${GREEN}💫 Making it official...${NC}"
 git commit -m "$1"
 
-echo -e "${GREEN}Trisha says: Another beautiful commit in the books! 🎉${NC}" 
+# Update context from Git history
+echo -e "${GREEN}📚 Updating context from Git history...${NC}"
+./scripts/generate_context.sh
+
+echo -e "${PURPLE}Trisha says: Another beautiful commit in the books! 🎉${NC}" 
