@@ -1,26 +1,74 @@
-# Dependencies
-node_modules/
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 .venv/
-
-# Build
-dist/
+env/
 build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pytest_cache/
+.coverage
+htmlcov/
+.pdm-python
+.ruff_cache/
 
-# Environment
-.env
-.env.local
-
-# Logs
-*.log
+# Node
+node_modules/
 npm-debug.log*
-
-# IDE
-.vscode/
-.idea/
-
-# Testing
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+dist/
 coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
 
 # OS
 .DS_Store
-Thumbs.db 
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+.env
+.env.*
+!.env.example
+*.log
+logs/
+tmp/
+temp/
+
+# Qdrant
+qdrant_storage/ 
