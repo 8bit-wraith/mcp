@@ -1,0 +1,128 @@
+# MCP SSH Server
+
+A powerful SSH server implementation for Model Context Protocol (MCP). This server enables secure remote command execution and file operations through SSH protocol, supporting both password and key-based authentication.
+
+Hue=Human UsEr (You - not limited to humans)
+Aye=AI Partner (usually Claude - not limited to Claude)
+
+## Features
+
+- Secure SSH connection management
+- Uses ssh_config file and can edit it
+- Password and key-based authentication
+- Remote command execution
+- File operations (upload/download)
+- Progress tracking for file transfers
+- Permission management
+- Directory operations
+- Bulk file transfers
+- Detailed logging
+- Allow multiple connections
+- Allow multiple commands to be executed in parallel
+- Allow multiple files to be uploaded in parallel
+- Sends a link to the user so they can collaborate on the same session
+- Tmux sessions
+  - Allows multiple sessions to be created and managed
+  - Encorages Hue to work with tmux sessions
+- All History is logged, if that really matters!  :)
+
+## Installation
+
+1. Install the package:
+```bash
+npm install mcp-ssh
+```
+
+2. Add to your Claude desktop config (`claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "ssh": {
+      "command": "node",
+      "args": ["%APPDATA%/npm/node_modules/mcp-ssh/dist/server.js"],
+      "env": {
+        "SSH_PORT": "8889",
+        "SSH_LOG_LEVEL": "info"
+      }
+    }
+  }
+}
+
+```
+
+## Usage
+
+### Password Authentication
+```powershell
+$body = @{
+    id = "test"
+    host = "example.com"
+    port = 22
+    username = "user"
+    password = "pass123"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "http://localhost:8889/connect" -Method Post -Body $body -ContentType "application/json"
+```
+
+### Key Authentication
+
+### Execute Commands
+
+### File Operations
+
+# Download file
+
+
+# Upload file
+
+# List directory
+
+### Status
+
+# Get connection status
+
+# Disconnect
+
+### Tmux sessions
+
+# Create tmux session
+
+# List tmux sessions
+
+# Attach to tmux session
+
+# Detach from tmux session
+
+# Kill tmux session
+
+
+## Development
+
+1. Clone the repository:
+```bash
+git clone https://github.com/shaike1/mcp-server-ssh.git
+cd mcp-server-ssh
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Build:
+```bash
+npm run build
+```
+
+4. Start server:
+```bash
+npm start
+```
+
+
+## Contributing
+
+## License
+
+MIT

@@ -1,0 +1,17 @@
+{
+  "name": "essential-mcp",
+  "version": "1.0.0",
+  "description": "Essential Model Context Protocol (MCP) implementations",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "ssh:dev": "cd packages/mcp-server-enhanced-ssh && npm run dev",
+    "ssh:build": "cd packages/mcp-server-enhanced-ssh && npm run build",
+    "ssh:test": "cd packages/mcp-server-enhanced-ssh && npm run test"
+  },
+  "keywords": ["mcp", "ai", "protocol"],
+  "author": "Hue & Aye Team <hue@8b.is>",
+  "license": "MIT"
+} 

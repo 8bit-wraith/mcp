@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "mcp-atc"
+version = "0.1.0"
+description = "MCP Awesome Tool Collection - A powerful toolkit for terminal automation"
+authors = ["Hue & Aye Team <hue@8b.is>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.109.0"
+uvicorn = "^0.27.0"
+websockets = "^12.0"
+python-jose = "^3.3.0"
+pydantic = "^2.5.3"
+rich = "^13.7.0"     # For beautiful terminal output
+typer = "^0.9.0"     # For CLI tools
+libtmux = "^0.23.2"  # For tmux management
+psutil = "^5.9.8"    # For system monitoring
+python-magic = "^0.4.27"  # For file type detection
+watchdog = "^3.0.0"  # For file system events
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.4.4"
+black = "^23.12.1"
+isort = "^5.13.2"
+mypy = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api" 
