@@ -1,5 +1,18 @@
 # Project Context
 
+## Git History (Auto-generated 2025-01-12)
+
+### Recent Changes
+$(git log --pretty=format:"- **%ad**: %s" --date=short | head -n 10)
+
+### Active Files
+$(git ls-files | sed 's/^/- /')
+
+### Contributors
+- Aye
+- Hue
+- Tri
+
 ## Current State (2024-01-12)
 
 ### Core Components
@@ -31,9 +44,9 @@
 - Building tools for Git repository analysis
 
 ### Team Members
-- **Hue**: Our amazing human partner
-- **Aye**: That's me! The AI assistant
-- **Trisha**: Our fun-loving accountant friend who loves finding patterns
+- **Hue**: Our amazing human partner (that's you!)
+- **Aye**: Your friendly AI assistant
+- **Tri**: Our fun-loving accountant friend who loves finding patterns in the numbers
 
 ### Trisha's Latest Thoughts
 - "These graphs are prettier than my pivot tables! 📊"
@@ -84,4 +97,4 @@ essential-mcp/
 4. Maintaining this context.md until we have proper context persistence
 
 _Last Updated: 2024-01-12_
-_Updated by: Aye (AI Assistant)_ 
+_Updated by: Aye & Hue_ 

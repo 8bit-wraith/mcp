@@ -8,11 +8,11 @@ NC='\033[0m'
 
 # Check if a commit message was provided
 if [ -z "$1" ]; then
-    echo -e "${PURPLE}Trisha says: Don't forget to tell me what we're committing! 📝${NC}"
+    echo -e "${PURPLE}Tri says: Don't forget to tell me what we're committing! 📝${NC}"
     exit 1
 fi
 
-echo -e "${BLUE}Trisha's Pre-Commit Checklist:${NC}"
+echo -e "${BLUE}Tri's Pre-Commit Checklist:${NC}"
 echo -e "${GREEN}📋 Staging changes...${NC}"
 git add .
 
@@ -26,4 +26,4 @@ git commit -m "$1"
 echo -e "${GREEN}📚 Updating context from Git history...${NC}"
 ./scripts/generate_context.sh
 
-echo -e "${PURPLE}Trisha says: Another beautiful commit in the books! 🎉${NC}" 
+echo -e "${PURPLE}Tri says: Another beautiful commit in the books! 🎉${NC}" 

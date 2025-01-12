@@ -43,7 +43,7 @@ EOL
     mv "$temp_file" "context.md"
     
     echo -e "${GREEN}Context updated successfully!${NC}"
-    echo -e "${PURPLE}Trisha says: Git history is like a well-maintained ledger - every entry tells a story! 📚${NC}"
+    echo -e "${PURPLE}Tri says: Git history is like a well-maintained ledger - every entry tells a story! 📚${NC}"
 }
 
 # Run the update function
