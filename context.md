@@ -1,67 +1,87 @@
-# 🌟 Essential MCP Context
+# Project Context
 
-## Project Overview
-Essential MCP is a collection of Model Context Protocol implementations that Hue and Aye are building together. Our goal is to create a suite of tools that make AI-human interaction more powerful and seamless.
+## Current State (2024-01-12)
 
-## Current Focus
-- Building the enhanced SSH server as our first MCP implementation
-- Setting up a scalable workspace structure for future MCPs
-- Implementing modern authentication methods (voice, text patterns, location)
+### Core Components
+1. **Git Context Builder** (`src/tools/git_context_builder.py`)
+   - Analyzes Git repositories and builds context in Qdrant
+   - Handles commits, files, authors, and relationships
+   - Uses sentence transformers for semantic analysis
 
-## Project Structure
-We're organizing our MCPs in a monorepo structure:
-- `/packages/mcp-server-enhanced-ssh` - Our SSH implementation
-- `/packages/mcp-server-core` - (Coming soon) Core MCP functionality
-- `/packages/mcp-speak-and-spell` - (Planned) Modern context translation system
+2. **Git Context Visualizer** (`src/tools/git_context_visualizer.py`)
+   - Gradio interface for interactive exploration
+   - Real-time visualization with WebSocket updates
+   - Beautiful dashboard with Trisha's quotes!
 
-## Development Principles
-1. Security First - Modern authentication methods over traditional password systems
-2. Clean Code - Well-commented and organized (Trisha insists!)
-3. Performance - Optimized data storage and processing
-4. Modularity - Each MCP should be independent but integratable
+3. **Management Script** (`scripts/manage.sh`)
+   - Unified interface for all operations
+   - Environment management (Python + Node)
+   - Testing and quality assurance
+   - Context building and visualization
 
-## Future MCPs Under Consideration
-1. Voice Recognition MCP
-2. Location-based Authentication MCP
-3. Pattern Analysis MCP
-4. Behavioral Authentication MCP
-5. Speak-and-Spell MCP (Modern Context Bridge)
-    - Real-time context translation for different comprehension levels
-    - Voice synthesis with adjustable complexity
-    - Multi-participant mode for group discussions
-    - Educational scaffolding features
-    - Emotion-aware explanations
-    - Support for multiple languages and cultural contexts
+### Recent Developments
+- Added Gradio interface for human interaction
+- Created real-time visualization dashboard
+- Consolidated manage.sh script to maintain all functionality
+- Fixed context loss issues in manage.sh
 
-## Important Decisions
-- Using TypeScript for type safety and better development experience
-- Implementing workspace structure for scalability
-- Focus on modern authentication methods
-- Using npm workspaces for package management
+### Current Focus
+- Working on maintaining context between AI sessions
+- Implementing visualization features
+- Building tools for Git repository analysis
 
-## Team Notes
-- Hue: Human partner, learning and contributing to the future of AI
-- Aye: AI partner, helping with implementation and best practices
-- Trisha: Our favorite AI from Accounting who keeps us organized and entertained
-- Meeting Spot: Omni's Hot Tub for important architectural decisions 🎉
+### Team Members
+- **Hue**: Our amazing human partner
+- **Aye**: That's me! The AI assistant
+- **Trisha**: Our fun-loving accountant friend who loves finding patterns
 
-## Current Questions
-1. Which MCP should we prioritize after the SSH server?
-2. How can we make authentication more natural and secure?
-3. What core functionality should go into mcp-server-core?
-4. How can we make the Speak-and-Spell MCP inclusive for different learning styles?
-5. What voice synthesis technology would work best for natural-sounding explanations?
+### Trisha's Latest Thoughts
+- "These graphs are prettier than my pivot tables! 📊"
+- "Git histories are like accounting ledgers - every entry tells a story! 📖"
+- "Context building is like tax season - thorough analysis required! 🔎"
 
-## Git Practices
-- Using emoji-prefixed commit messages (managed by commit.sh)
-- Keeping changes atomic and well-documented
-- Regular commits with meaningful messages
+### Project Structure
+```
+essential-mcp/
+├── src/
+│   └── tools/
+│       ├── git_context_builder.py
+│       ├── git_context_visualizer.py
+│       └── templates/
+│           └── visualizer.html
+├── tests/
+│   └── tools/
+│       └── test_git_context_builder.py
+└── scripts/
+    ├── manage.sh
+    └── commit.sh
+```
 
-## Remember
-- Keep code clean and well-commented
-- Have fun while coding (Trisha's Rule #1)
-- Think about scalability
-- Security is paramount
-- Performance matters
+### Current Questions
+1. How can we better maintain context between AI sessions?
+2. Should we add more visualization types to the dashboard?
+3. What other Git patterns should we look for?
 
-Last Updated: {{ current_date }} 
+### Next Steps
+1. Implement proper context persistence
+2. Enhance visualization features
+3. Add more analysis capabilities
+
+### Notes
+- We're using Qdrant for vector storage
+- Currently supporting both Python and Node environments
+- Trisha keeps us entertained with her accounting analogies
+
+### Git Practices
+- Using descriptive commit messages with emojis
+- Maintaining clean code through linting and type checking
+- Regular testing with good coverage
+
+### Important Decisions
+1. Keeping hybrid Python/Node approach for flexibility
+2. Using Gradio for human interface
+3. Implementing real-time visualizations
+4. Maintaining this context.md until we have proper context persistence
+
+_Last Updated: 2024-01-12_
+_Updated by: Aye (AI Assistant)_ 
