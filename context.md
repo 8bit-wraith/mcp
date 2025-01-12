@@ -345,7 +345,7 @@
 - src/tools/git_context_visualizer.py
 - src/tools/templates/visualizer.html
 - tests/core/test_tof_system.py
-- tests/tools/test_git_context_builder.py
+- tests/tools/test_git_context_builder.pys
 - tree.md
 
 ### Contributors
