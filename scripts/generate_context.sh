@@ -32,14 +32,14 @@ $(git log --pretty=format:"- **%ad**: %s" --date=short | head -n 10)
 $(git ls-files | sed 's/^/- /')
 
 ### Contributors
-$(git shortlog -sn --all | sed 's/^[0-9 \t]*/-/')
+$(git shortlog -sn --all | sed 's/^[0-9 \t]*/-/' | sort -u)
 
 EOL
 
-    # Append existing context if it exists (excluding the old header)
+    # Append existing manual context if it exists
     if [ -f "context.md" ]; then
-        # Skip the first line (old header) and append the rest
-        sed '1d' context.md >> "${temp_file}"
+        # Extract only the manual sections (everything after Git History)
+        sed -n '/^## Git History/,$p' "context.md" | sed '1,/^$/d' >> "${temp_file}"
     fi
     
     # Replace the old context file with the new one
