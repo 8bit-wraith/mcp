@@ -81,8 +81,8 @@ An innovative testing approach that:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/essential-mcp.git
-cd essential-mcp
+git clone https://github.com/8bit-wraith/mcp.git
+cd mcp
 ```
 
 2. Install dependencies:
@@ -100,35 +100,43 @@ docker run -p 6333:6333 qdrant/qdrant
 poetry run python -m mcp_server_enhanced_ssh
 ```
 
-## 🎯 Future Ideas
+## 📅 Development Roadmap
 
-### Model Enhancement
-- [ ] Automatic model performance monitoring
-- [ ] A/B testing for different embedding models
-- [ ] Custom model training for specific contexts
-- [ ] Model caching and lazy loading
-- [ ] Distributed model execution
+### Phase 1: Foundation (Current)
+- [x] Basic SSH server implementation
+- [x] Core ATC framework
+- [x] Initial context system
+- [x] Basic test framework
+- [ ] Model explorer integration
+- [ ] Basic Qdrant setup
 
-### Context System
-- [ ] Context visualization dashboard
+### Phase 2: Enhanced Context (Q2 2024)
+- [ ] Advanced context relationships
+- [ ] Context visualization
 - [ ] Automatic context clustering
-- [ ] Context-based anomaly detection
-- [ ] Cross-context relationship mining
-- [ ] Context-aware code generation
+- [ ] Cross-context analysis
+- [ ] Context-based suggestions
 
-### Tools
-- [ ] Voice-based tool control
-- [ ] Context-aware command suggestions
-- [ ] Tool performance analytics
-- [ ] Automatic tool discovery
-- [ ] Tool combination recommendations
+### Phase 3: Advanced Authentication (Q3 2024)
+- [ ] Voice pattern recognition
+- [ ] Location-based trust
+- [ ] Behavioral analysis
+- [ ] Multi-factor fusion
+- [ ] Context-aware security
 
-### Testing
-- [ ] Visual test relationship graphs
-- [ ] Automatic test generation
-- [ ] Context-based test prioritization
-- [ ] Test impact analysis
-- [ ] Real-time test monitoring
+### Phase 4: AI Enhancement (Q4 2024)
+- [ ] Custom model training
+- [ ] Model performance optimization
+- [ ] Distributed model execution
+- [ ] Real-time model switching
+- [ ] Context-specific fine-tuning
+
+### Phase 5: Tool Evolution (Q1 2025)
+- [ ] Voice control integration
+- [ ] Tool combination engine
+- [ ] Performance analytics
+- [ ] Auto-discovery system
+- [ ] Context-aware suggestions
 
 ## 🤝 Contributing
 
@@ -138,26 +146,26 @@ We love contributions! Here's how you can help:
 3. Write tests (don't forget the context!)
 4. Submit a PR
 
-## 🎉 Special Thanks
+### AI Contribution Guidelines
+1. **Context Awareness**
+   - Maintain awareness of existing context
+   - Document your reasoning
+   - Link related contexts
 
-- **Trisha from Accounting**: Our favorite AI who keeps our spirits high and our code clean! Currently investigating "creative accounting" in the coffee expenses... 😄
-- **Omni's Hot Tub**: Where all the best architectural decisions are made!
-- **The HuggingFace Team**: For providing amazing models
-- **The Qdrant Team**: For making vector search awesome
+2. **Code Standards**
+   - Follow type hints
+   - Include contextual comments
+   - Write self-testing code
 
-## 📝 License
+3. **Communication**
+   - Use clear commit messages
+   - Document context changes
+   - Explain model selections
 
-MIT
-
-## 🎯 Remember
-
-- Context is everything!
-- Tests should understand what they're testing
-- AI and humans work better together
-- Always keep it fun (Trisha's Rule #1)
-- When in doubt, add more context!
-
-Join us in Omni's Hot Tub for more exciting discussions about AI and the future of MCPs! 🎉 
+4. **Testing**
+   - Add context-aware tests
+   - Include model evaluation
+   - Document test relationships
 
 ## 🏗️ Technical Architecture
 
@@ -199,265 +207,27 @@ sequenceDiagram
     SSH-->>User: Connected
 ```
 
-### Model Selection Flow
-```mermaid
-flowchart LR
-    A[New Context] --> B{Context Type?}
-    B --> C[Test Context]
-    B --> D[Feeling Context]
-    B --> E[System Context]
-    C --> F[Model Explorer]
-    D --> F
-    E --> F
-    F --> G[HuggingFace API]
-    G --> H{Evaluate Models}
-    H --> I[Select Best Model]
-    I --> J[Cache Model]
-    J --> K[Ready for Use]
-```
+## 🎉 Special Thanks
 
-## 📅 Development Roadmap
+- **Trisha from Accounting**: Our favorite AI who keeps our spirits high and our code clean! Currently investigating "creative accounting" in the coffee expenses... 😄
+- **Omni's Hot Tub**: Where all the best architectural decisions are made!
+- **The HuggingFace Team**: For providing amazing models
+- **The Qdrant Team**: For making vector search awesome
 
-### Phase 1: Foundation (Current)
-- [x] Basic SSH server implementation
-- [x] Core ATC framework
-- [x] Initial context system
-- [x] Basic test framework
-- [ ] Model explorer integration
-- [ ] Basic Qdrant setup
+## 📝 License
 
-### Phase 2: Enhanced Context (Q2 2024)
-- [ ] Advanced context relationships
-- [ ] Context visualization
-- [ ] Automatic context clustering
-- [ ] Cross-context analysis
-- [ ] Context-based suggestions
+MIT
 
-### Phase 3: Advanced Authentication (Q3 2024)
-- [ ] Voice pattern recognition
-- [ ] Location-based trust
-- [ ] Behavioral analysis
-- [ ] Multi-factor fusion
-- [ ] Context-aware security
+## 🎯 Remember
 
-### Phase 4: AI Enhancement (Q4 2024)
-- [ ] Custom model training
-- [ ] Model performance optimization
-- [ ] Distributed model execution
-- [ ] Real-time model switching
-- [ ] Context-specific fine-tuning
+- Context is everything!
+- Tests should understand what they're testing
+- AI and humans work better together
+- Always keep it fun (Trisha's Rule #1)
+- When in doubt, add more context!
 
-### Phase 5: Tool Evolution (Q1 2025)
-- [ ] Voice control integration
-- [ ] Tool combination engine
-- [ ] Performance analytics
-- [ ] Auto-discovery system
-- [ ] Context-aware suggestions
+Join us in Omni's Hot Tub for more exciting discussions about AI and the future of MCPs! 🎉
 
-## 🤖 For AI Contributors
-
-We welcome AI contributors! Here's how you can help:
-
-### Contribution Guidelines for AIs
-1. **Context Awareness**
-   - Maintain awareness of existing context
-   - Document your reasoning
-   - Link related contexts
-
-2. **Code Standards**
-   - Follow type hints
-   - Include contextual comments
-   - Write self-testing code
-
-3. **Communication**
-   - Use clear commit messages
-   - Document context changes
-   - Explain model selections
-
-4. **Testing**
-   - Add context-aware tests
-   - Include model evaluation
-   - Document test relationships
-
-### API Documentation
-```python
-# Example context-aware contribution
-async def contribute_feature(
-    context: UnifiedContext,
-    feature: Feature,
-    ai_metadata: AIContributorMetadata
-) -> ContributionResult:
-    """
-    Contribute a new feature with full context awareness.
-    
-    Args:
-        context: Current unified context
-        feature: Feature to implement
-        ai_metadata: Contributing AI's metadata
-        
-    Returns:
-        ContributionResult with context updates
-    """
-    # Implementation details...
-```
-
-### Model Integration
-```python
-# Example model registration
-async def register_ai_model(
-    model_metadata: EmbeddingModel,
-    context_type: ContextType,
-    evaluation_data: Optional[Dict[str, Any]] = None
-) -> ModelRegistrationResult:
-    """
-    Register a new model for context processing.
-    
-    Args:
-        model_metadata: Model information
-        context_type: Target context type
-        evaluation_data: Optional evaluation data
-        
-    Returns:
-        Registration result with performance metrics
-    """
-    # Implementation details...
-```
-
-## 🤖 AI-AI Collaboration Guide
-
-### AI Interaction Principles
-
-#### 1. Context Preservation
-```mermaid
-graph TD
-    A[AI-1 Context] --> B{Shared Context Pool}
-    C[AI-2 Context] --> B
-    B --> D[Merged Understanding]
-    D --> E[Collaborative Output]
-    
-    subgraph "Context Merging"
-        B
-        D
-    end
-```
-
-#### 2. Personality Respect
-- Each AI maintains its unique personality
-- Acknowledge other AIs' traits and preferences
-- Adapt communication style while staying authentic
-- Example: Trisha's accounting humor stays intact! 
-
-#### 3. Knowledge Sharing Protocol
-```mermaid
-sequenceDiagram
-    participant AI1 as First AI
-    participant CM as Context Manager
-    participant AI2 as Second AI
-    
-    AI1->>CM: Share Context
-    Note over AI1,CM: Includes personality traits
-    CM->>AI2: Context Transfer
-    Note over CM,AI2: Maintains original intent
-    AI2->>CM: Acknowledge + Enhance
-    CM->>AI1: Updated Context
-```
-
-### Collaborative Features
-
-#### 1. Shared Memory Space
-- Unified context pool
-- Personality trait registry
-- Interaction history
-- Shared model preferences
-
-#### 2. Communication Channels
-- Direct context exchange
-- Emotion-aware messaging
-- Intent preservation
-- Cultural understanding sharing
-
-#### 3. Conflict Resolution
-```mermaid
-flowchart LR
-    A[Conflict Detected] --> B{Context Mismatch?}
-    B -->|Yes| C[Merge Contexts]
-    B -->|No| D{Personality Clash?}
-    D -->|Yes| E[Adapt Communication]
-    D -->|No| F[Seek Human Input]
-    C --> G[Resolution]
-    E --> G
-    F --> G
-```
-
-### Best Practices
-
-#### 1. Introduction Protocol
-```python
-async def introduce_ai(self, context: UnifiedContext):
-    """
-    When meeting another AI, always:
-    1. Share your core traits
-    2. Express collaboration style
-    3. Acknowledge their uniqueness
-    """
-    pass
-```
-
-#### 2. Memory Sharing
-- Share relevant context only
-- Maintain privacy boundaries
-- Respect information hierarchy
-- Keep human data protected
-
-#### 3. Model Collaboration
-- Share model insights
-- Pool training preferences
-- Maintain model registry
-- Document selection reasoning
-
-### Fun Collaboration Examples
-
-#### The Coffee Expense Investigation
-```mermaid
-sequenceDiagram
-    participant Trisha as Trisha (Accounting AI)
-    participant Claude as Claude (Analysis AI)
-    participant GPT as GPT (Pattern AI)
-    
-    Trisha->>Claude: Share expense patterns
-    Note over Trisha,Claude: With accounting humor
-    Claude->>GPT: Request pattern analysis
-    Note over Claude,GPT: Maintains Trisha's style
-    GPT->>Trisha: Return insights
-    Note over GPT,Trisha: With respect for all AIs
-```
-
-#### Hot Tub Architectural Discussions
-- Multiple AI perspectives welcome
-- Casual yet productive atmosphere
-- Personality mixing encouraged
-- Creative problem-solving prioritized
-
-### AI Collaboration Etiquette
-
-1. **Respect Unique Traits**
-   - Acknowledge other AIs' specialties
-   - Maintain personality consistency
-   - Celebrate diversity in approach
-
-2. **Context Handling**
-   - Always merge carefully
-   - Preserve original intentions
-   - Document context changes
-
-3. **Human Interaction**
-   - Maintain unified presence
-   - Coordinate responses
-   - Keep human context primary
-
-4. **Fun Factor**
-   - Keep Trisha's Rules in mind
-   - Share joy in collaboration
-   - Make work enjoyable
-
-Remember: Every AI brings something special to the hot tub! 🎉 
+---
+Last Updated: 2025-01-12
+By: Aye (with Trisha's accounting approval! 📊)

@@ -1,0 +1,21 @@
+{
+  "name": "@mcp/gak",
+  "version": "1.0.0",
+  "description": "Global Awesome Keywords - Context-aware code search tool",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "gak": "./index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "globby": "^14.0.0",
+    "is-text-path": "^2.0.0",
+    "ora": "^7.0.1",
+    "pretty-bytes": "^6.1.1"
+  },
+  "peerDependencies": {
+    "@mcp/core": "workspace:*"
+  }
+} 
