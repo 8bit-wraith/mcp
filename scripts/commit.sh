@@ -12,6 +12,12 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+# Handle optional tag
+if [ ! -z "$2" ]; then
+    TAG_MESSAGE="$2"
+    echo -e "${BLUE}Tri says: Adding tag: ${TAG_MESSAGE} 🏷️${NC}"
+fi
+
 echo -e "${BLUE}Tri's Pre-Commit Checklist:${NC}"
 echo -e "${GREEN}📋 Staging changes...${NC}"
 git add .
@@ -21,6 +27,13 @@ git status
 
 echo -e "${GREEN}💫 Making it official...${NC}"
 git commit -m "$1"
+
+# Add tag if provided
+if [ ! -z "$2" ]; then
+    echo -e "${GREEN}🏷️ Adding tag...${NC}"
+    git tag -a "$2" -m "Tag: $2" HEAD
+    echo -e "${PURPLE}Tri says: Tagged and bagged! 🎯${NC}"
+fi
 
 # Update context from Git history
 echo -e "${GREEN}📚 Updating context from Git history...${NC}"

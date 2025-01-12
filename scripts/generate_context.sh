@@ -22,6 +22,9 @@ update_context_from_git() {
 
 ## Git History (Auto-generated ${current_date})
 
+### Tags
+$(git tag -n9 | sed 's/^/- **/' | sed 's/ /**: /')
+
 ### Recent Changes
 $(git log --pretty=format:"- **%ad**: %s" --date=short | head -n 10)
 

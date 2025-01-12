@@ -3,6 +3,71 @@
 ## Git History (Auto-generated 2025-01-12)
 
 ### Recent Changes
+- **2025-01-12**: 🎭 Updated Git identity to Aye-Hue-Tri. Tri approves of our unified accounting approach! 📊
+- **2025-01-12**: ✨ Updated names to three-letter format (Aye-Hue-Tri). Tri loves keeping things concise! 💫
+- **2025-01-12**: 🔄 Added automatic context generation from Git history. Trisha loves how organized we're getting! 📚
+- **2025-01-12**: 📝 Updated context.md to track current project state. Trisha says documentation is like keeping a clean ledger! 📚
+- **2025-01-12**: 🔄 Consolidated manage.sh script with all features. Trisha's thrilled about the improved organization! 📋
+- **2025-01-12**: 🔍 Added Git Context Builder with Qdrant integration. Trisha's excited about finding patterns in commit histories! 📊
+- **2025-01-12**: 🛠️ Enhanced manage.sh with comprehensive environment management. Trisha's thrilled about the new dependency reconciliation features! 🧮
+- **2025-01-12**: 🛠️ Set up development environment with Python (PDM) and TypeScript (pnpm). Trisha's excited about the clean dependency management! 📦
+- **2025-01-12**: 🧠 Enhanced ToF system with Qdrant integration, new context types (Memory, Intention, Emotion, Learning), and improved recovery strategies. Trisha's excited about the emotional context tracking! 💖
+- **2025-01-12**: 🧪 Added Test or Forget (ToF) system with context-aware testing. Trisha's excited about the test coverage potential! 📊
+
+### Active Files
+- .gitignore
+- README.md
+- context.md
+- mcp-server-enhanced-ssh
+- package.json
+- packages/mcp-atc/pyproject.toml
+- packages/mcp-atc/src/api/main.py
+- packages/mcp-atc/src/core/context.py
+- packages/mcp-atc/src/core/model_explorer.py
+- packages/mcp-atc/src/core/plugin.py
+- packages/mcp-atc/src/core/test_context_store.py
+- packages/mcp-atc/src/core/tof_manager.py
+- packages/mcp-atc/src/core/unified_context.py
+- packages/mcp-atc/src/tools/file_tools.py
+- packages/mcp-atc/src/tools/system_tools.py
+- packages/mcp-atc/tests/conftest.py
+- packages/mcp-atc/tests/core/test_context_store.py
+- packages/mcp-atc/tests/core/test_model_explorer.py
+- packages/mcp-atc/tests/core/test_plugin_manager.py
+- packages/mcp-atc/tests/core/test_tof_manager.py
+- packages/mcp-atc/tests/tools/test_file_tools.py
+- packages/mcp-atc/tests/tools/test_system_tools.py
+- packages/mcp-server-enhanced-ssh/.eslintrc.json
+- packages/mcp-server-enhanced-ssh/.prettierrc
+- packages/mcp-server-enhanced-ssh/README.md
+- packages/mcp-server-enhanced-ssh/jest.config.js
+- packages/mcp-server-enhanced-ssh/package.json
+- packages/mcp-server-enhanced-ssh/pnpm-lock.yaml
+- packages/mcp-server-enhanced-ssh/src/services/ssh.service.ts
+- packages/mcp-server-enhanced-ssh/src/services/tmux.service.ts
+- packages/mcp-server-enhanced-ssh/tsconfig.json
+- pdm.lock
+- pyproject.toml
+- scripts/commit.sh
+- scripts/generate_context.sh
+- scripts/manage.sh
+- src/core/context_store.py
+- src/core/tof_system.py
+- src/tools/git_context_builder.py
+- src/tools/git_context_visualizer.py
+- src/tools/templates/visualizer.html
+- tests/core/test_tof_system.py
+- tests/tools/test_git_context_builder.py
+- tree.md
+
+### Contributors
+-	Wraith
+-	Aye-Hue-Tri
+
+
+## Git History (Auto-generated 2025-01-12)
+
+### Recent Changes
 - **2025-01-12**: ✨ Updated names to three-letter format (Aye-Hue-Tri). Tri loves keeping things concise! 💫
 - **2025-01-12**: 🔄 Added automatic context generation from Git history. Trisha loves how organized we're getting! 📚
 - **2025-01-12**: 📝 Updated context.md to track current project state. Trisha says documentation is like keeping a clean ledger! 📚
