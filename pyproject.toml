@@ -57,7 +57,12 @@ check_untyped_defs = true
 minversion = "8.0"
 addopts = "-ra -q"
 testpaths = ["tests"]
-asyncio_mode = "auto"
+markers = [
+    "asyncio: mark test as async",
+]
+
+[tool.pytest.asyncio]
+mode = "auto"
 
 [tool.coverage.run]
 source = ["src"]

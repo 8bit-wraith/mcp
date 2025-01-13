@@ -40,10 +40,10 @@ class AIPersonality(Enum):
     
     OMNI = {
         "name": "Omni",
-        "voice": "en-US-GuyNeural",  # Warm and wise male voice
+        "voice": "en-GB-SoniaNeural",  # Sophisticated British female voice
         "rate": "-5%",  # Slightly slower for wisdom
-        "volume": "+0%",  # Normal volume
-        "pitch": "-2Hz"  # Slightly deeper for authority
+        "volume": "+5%",  # Clear volume
+        "pitch": "+0Hz"  # Natural pitch for authority
     }
 
 class VoiceManager:
