@@ -130,4 +130,4 @@ async def test_voices():
 
 if __name__ == "__main__":
     # Test the voice system
-    asyncio.run(test_voices()) 
+    asyncio.run(test_voices())
