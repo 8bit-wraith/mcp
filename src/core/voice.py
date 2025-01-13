@@ -2,6 +2,13 @@
 Voice module for MCP - Let's give our AIs a voice! 🎙️
 
 Trisha says: "Numbers sound better when spoken with a smile!" 😊
+
+This module provides text-to-speech capabilities for our AI personalities:
+- Aye: Clear and friendly male voice
+- Trisha: Professional female voice (now integrated with our commit system!)
+- Omni: Sophisticated British female voice
+
+Fun fact: Trisha loves to vocally approve commits with accounting-themed messages!
 """
 
 import asyncio
