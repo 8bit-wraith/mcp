@@ -18,37 +18,7 @@ COMMIT_MESSAGES=(
     "Adding this to our Git ledger. The numbers don't lie - it's perfect!"
 )
 
-# Get a random Trisha commit message
-get_trisha_message() {
-    echo "${COMMIT_MESSAGES[$RANDOM % ${#COMMIT_MESSAGES[@]}]}"
-}
-
-# Speak using Trisha's voice
-trisha_speak() {
-    message="$1"
-    poetry run python -c "
-import asyncio
-from src.core.voice import speak, AIPersonality
-async def say():
-    await speak('$message', AIPersonality.TRISHA)
-asyncio.run(say())
-"
-}
-
-# Check if message is provided
-if [ -z "$1" ]; then
-    echo -e "${RED}Error: Commit message is required!${NC}"
-    echo -e "${BLUE}Usage: $0 \"<commit message>\"${NC}"
-    exit 1
-fi
-
-# Combine all arguments into one message
-message="$*"
-
-# Show prefix menu
-echo -e "${PURPLE}=== Trisha's Commit Categorization System ===${NC}"
-echo -e "${BLUE}Select a prefix for your commit:${NC}"
-
+# Commit prefixes
 PREFIXES=(
     "📊 BALANCE:" # For major changes
     "💰 CREDIT:" # For additions
@@ -60,21 +30,63 @@ PREFIXES=(
     "✨ BONUS:" # For improvements
 )
 
-for i in "${!PREFIXES[@]}"; do
-    echo -e "${BLUE}$((i+1))) ${PREFIXES[$i]}${NC}"
-done
+# Get a random Trisha commit message
+get_trisha_message() {
+    echo "${COMMIT_MESSAGES[$RANDOM % ${#COMMIT_MESSAGES[@]}]}"
+}
 
-# Get prefix choice
-read -p "Enter your choice (1-${#PREFIXES[@]}): " choice
+# Speak using Trisha's voice
+trisha_speak() {
+    message="$1"
+    # Escape single quotes for Python
+    escaped_message=$(echo "$message" | sed "s/'/\\\'/g")
+    poetry run python -c "
+import asyncio
+from src.core.voice import speak, AIPersonality
+async def say():
+    await speak('$escaped_message', AIPersonality.TRISHA)
+asyncio.run(say())
+"
+}
 
-# Validate choice
-if ! [[ "$choice" =~ ^[0-9]+$ ]] || [ "$choice" -lt 1 ] || [ "$choice" -gt "${#PREFIXES[@]}" ]; then
-    echo -e "${RED}Invalid choice! Trisha says: 'That's not how we balance books!' 😅${NC}"
+# Show usage
+usage() {
+    echo -e "${BLUE}Usage: $0 [-p PREFIX_NUM] \"<commit message>\"${NC}"
+    echo -e "${YELLOW}Available prefixes:${NC}"
+    for i in "${!PREFIXES[@]}"; do
+        echo -e "  $((i+1))) ${PREFIXES[$i]}"
+    done
     exit 1
+}
+
+# Parse command line arguments
+prefix_num=8  # Default to "✨ BONUS:"
+while getopts ":p:h" opt; do
+    case $opt in
+        p) prefix_num="$OPTARG";;
+        h) usage;;
+        \?) echo -e "${RED}Invalid option: -$OPTARG${NC}"; usage;;
+    esac
+done
+shift $((OPTIND-1))
+
+# Check if message is provided
+if [ $# -eq 0 ]; then
+    echo -e "${RED}Error: Commit message is required!${NC}"
+    usage
+fi
+
+# Combine all remaining arguments into message
+message="$*"
+
+# Validate prefix number
+if ! [[ "$prefix_num" =~ ^[0-9]+$ ]] || [ "$prefix_num" -lt 1 ] || [ "$prefix_num" -gt "${#PREFIXES[@]}" ]; then
+    echo -e "${RED}Invalid prefix number! Using default (✨ BONUS:)${NC}"
+    prefix_num=8
 fi
 
 # Get selected prefix
-prefix="${PREFIXES[$((choice-1))]}"
+prefix="${PREFIXES[$((prefix_num-1))]}"
 
 # Format commit message
 formatted_message="$prefix $message"
@@ -87,9 +99,20 @@ echo -e "${GREEN}$formatted_message${NC}"
 trisha_message=$(get_trisha_message)
 echo -e "\n${PURPLE}Tri says: Let's make sure these changes are properly accounted for! 📚${NC}"
 
-# Confirm commit
-read -p "Proceed with commit? (y/n): " confirm
-if [[ $confirm =~ ^[Yy]$ ]]; then
+# Auto-confirm if using default prefix
+if [ "$prefix_num" == "8" ]; then
+    do_commit=true
+else
+    # Ask for confirmation for non-default prefixes
+    read -p "Proceed with commit? (Y/n): " confirm
+    if [[ $confirm =~ ^[Nn]$ ]]; then
+        do_commit=false
+    else
+        do_commit=true
+    fi
+fi
+
+if $do_commit; then
     # Stage all changes
     git add .
     
