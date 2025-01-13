@@ -52,7 +52,7 @@ check_untyped_defs = true
 
 [tool.pytest.ini_options]
 minversion = "8.0"
-addopts = "-ra -q --cov=src"
+addopts = "-ra -q"
 testpaths = ["tests"]
 asyncio_mode = "auto"
 

@@ -80,27 +80,101 @@ An innovative testing approach that:
 
 ## 🚀 Getting Started
 
-1. Clone the repository:
+### Prerequisites
+- Python 3.11 or higher
+- Node.js 18 or higher
+- Docker (for Qdrant)
+- pnpm (for Node.js packages)
+- Poetry (for Python packages)
+
+### 1. Clone the repository:
 ```bash
 git clone https://github.com/8bit-wraith/mcp.git
 cd mcp
 ```
 
-2. Install dependencies:
+### 2. Set up Python environment:
 ```bash
-pnpm install
+# Install Poetry if you haven't already
+curl -sSL https://install.python-poetry.org | python3 -
+
+# Create and activate virtual environment
+poetry env use python3.11
+poetry shell
+
+# Install dependencies
 poetry install
 ```
 
-3. Start Qdrant:
+### 3. Set up Node.js environment:
 ```bash
-docker run -p 6333:6333 qdrant/qdrant
+# Install pnpm if you haven't already
+npm install -g pnpm
+
+# Install Node.js dependencies
+pnpm install
 ```
 
-4. Run the SSH server:
+### 4. Start the services:
+
+#### Start Qdrant:
 ```bash
-poetry run python -m mcp_server_enhanced_ssh
+# Trisha's Note: Vector storage is like a filing cabinet for AI thoughts! 📁
+docker run -d -p 6333:6333 -v $(pwd)/qdrant_data:/qdrant/storage qdrant/qdrant
 ```
+
+#### Start the SSH server:
+```bash
+# From the poetry shell
+python -m packages.mcp-server-enhanced-ssh
+```
+
+#### Start the API server:
+```bash
+# From another poetry shell
+python -m packages.mcp-atc.src.api.main
+```
+
+### 5. Run tests:
+```bash
+# Trisha says: "Test early, test often, and never cook the books!" 📊
+./scripts/manage.sh test
+```
+
+### 6. Development Commands:
+
+```bash
+# Start all services
+./scripts/manage.sh start
+
+# Stop all services
+./scripts/manage.sh stop
+
+# Restart services
+./scripts/manage.sh restart
+
+# Run tests with coverage
+./scripts/manage.sh test-coverage
+
+# Format code
+./scripts/manage.sh format
+```
+
+### 7. Verify Installation:
+- Qdrant UI: http://localhost:6333/dashboard
+- API Docs: http://localhost:8000/docs
+- SSH Server: localhost:2222
+
+### Troubleshooting:
+1. If you see port conflicts, check if services are already running:
+   ```bash
+   ./scripts/manage.sh status
+   ```
+2. For environment issues:
+   ```bash
+   ./scripts/manage.sh doctor
+   ```
+3. Need help? Join us in Omni's Hot Tub! 🌊
 
 ## 🎯 Future Ideas
 
