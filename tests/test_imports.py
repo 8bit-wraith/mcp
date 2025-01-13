@@ -57,8 +57,8 @@ def test_imports():
         print("✅ Successfully imported tof_system")
         
         # Verify we can create an instance
-        manager = ToFManager()
-        assert hasattr(manager, 'contexts'), "ToFManager initialization failed"
+        manager = ToFManager(qdrant_host="localhost", qdrant_port=6333)
+        assert isinstance(manager.contexts, dict), "ToFManager initialization failed"
         
     except ImportError as e:
         print(f"❌ Error importing tof_system:")
@@ -69,4 +69,4 @@ def test_imports():
         traceback.print_exc()
         pytest.fail(f"Unexpected error with tof_system: {str(e)}")
 
-    print("\n✨ All imports tested successfully!")
+    print("\n✨ All imports successful! Tri would be proud! ✨")

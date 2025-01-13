@@ -14,6 +14,7 @@ JOKES=(
     "What's an accountant's favorite time? FISCAL time! ⏰"
     "How does Trisha organize her AI thoughts? Double-entry bookkeeping! 🤖"
     "What's Trisha's favorite movie? The Accountant... but with more jokes! 🎬"
+    "What's an AI's favorite financial statement? The cash FLOW chart! 💸"
 )
 
 # Print a random Trisha joke
@@ -175,6 +176,17 @@ clean() {
     trisha_says
 }
 
+# Voice testing
+test_voices() {
+    echo -e "${BLUE}Testing AI voices...${NC}"
+    poetry run python -c "
+import asyncio
+from src.core.voice import test_voices
+asyncio.run(test_voices())
+"
+    trisha_says
+}
+
 # Command line interface
 case "${1:-menu}" in
     "start")
@@ -205,6 +217,9 @@ case "${1:-menu}" in
     "clean")
         clean
         ;;
+    "voices")
+        test_voices
+        ;;
     "menu")
         # Main menu
         while true; do
@@ -217,7 +232,8 @@ case "${1:-menu}" in
             echo -e "${BLUE}6) Format code${NC}"
             echo -e "${BLUE}7) Run system check${NC}"
             echo -e "${BLUE}8) Clean up${NC}"
-            echo -e "${BLUE}9) Exit${NC}"
+            echo -e "${BLUE}9) Test voices${NC}"
+            echo -e "${BLUE}10) Exit${NC}"
             
             read -p "Enter your choice: " choice
             
@@ -230,7 +246,8 @@ case "${1:-menu}" in
                 6) format_code ;;
                 7) doctor ;;
                 8) clean ;;
-                9)
+                9) test_voices ;;
+                10)
                     echo -e "${PURPLE}Tri says: Time to balance those books! See you next time! 👋${NC}"
                     exit 0
                     ;;
@@ -242,7 +259,7 @@ case "${1:-menu}" in
         ;;
     *)
         echo -e "${RED}Unknown command: $1${NC}"
-        echo "Usage: $0 {start|stop|restart|status|test|test-coverage|format|doctor|clean|menu}"
+        echo "Usage: $0 {start|stop|restart|status|test|test-coverage|format|doctor|clean|voices|menu}"
         exit 1
         ;;
 esac 

@@ -23,7 +23,10 @@ dependencies = [
     "isort>=5.13.2",
     "mypy>=1.8.0",
     "flake8>=7.0.0",
-    "rich>=13.7.0"
+    "rich>=13.7.0",
+    "edge-tts>=6.1.9",
+    "sounddevice>=0.4.6",
+    "soundfile>=0.12.1"
 ]
 requires-python = ">=3.11"
 readme = "README.md"
