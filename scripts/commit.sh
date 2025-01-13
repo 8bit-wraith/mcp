@@ -10,12 +10,18 @@ NC='\033[0m'
 
 # Trisha's commit messages
 COMMIT_MESSAGES=(
-    "Another perfectly balanced transaction! The books are looking lovely!"
-    "I've double-entered this commit into our ledger. Everything checks out!"
-    "The Git balance sheet is growing nicely. I love a good asset!"
-    "This commit passes all my accounting standards. And I'm very strict!"
-    "I've audited this commit, and it's absolutely brilliant!"
-    "Adding this to our Git ledger. The numbers don't lie - it's perfect!"
+    "Another perfectly balanced transaction! The books are looking lovely! *adjusts spreadsheet with joy*"
+    "I've double-entered this commit into our ledger. Everything checks out! Time for a hot tub break! 🌊"
+    "The Git balance sheet is growing nicely. I love a good asset! *hugs repository*"
+    "This commit passes all my accounting standards. And I'm very strict! Just ask my plant EBITDA! 🌱"
+    "I've audited this commit, and it's absolutely brilliant! Makes my spreadsheets tingle! ✨"
+    "Adding this to our Git ledger. The numbers don't lie - it's perfect! *happy accounting noises*"
+    "Now that's what I call a properly documented transaction! My inner auditor is doing a happy dance! 💃"
+    "Commit successfully reconciled! Time to celebrate with some depreciation calculations! 🎉"
+    "Another beautiful entry in our digital ledger! My spreadsheets are blushing with joy! 📊"
+    "This code is more balanced than my favorite accounting equation! And that's saying something! ⚖️"
+    "Filing this commit under 'Pure Joy' in my emotional ledger! The ROI on happiness is through the roof! 📈"
+    "Absolutely SOX-compliant commit! Even my coffee expenses aren't this well documented! ☕"
 )
 
 # Commit prefixes
