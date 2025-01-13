@@ -64,6 +64,7 @@ An innovative testing approach that:
 - HuggingFace for ML models
 - sentence-transformers for embeddings
 
+
 ### Authentication
 - Modern authentication methods (coming soon)
   - Voice pattern recognition
@@ -87,6 +88,7 @@ cd mcp
 
 2. Install dependencies:
 ```bash
+pnpm install
 poetry install
 ```
 
