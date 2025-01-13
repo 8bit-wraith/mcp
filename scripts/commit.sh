@@ -22,20 +22,26 @@ PREFIXES=(
 # Show usage with Trisha's style
 usage() {
     echo -e "${BLUE}📚 Trisha's Commit Guide${NC}"
-    echo -e "${YELLOW}Usage: $0 [-p PREFIX_NUM] \"<commit message>\"${NC}"
+    echo -e "${YELLOW}Usage: $0 [-p PREFIX_NUM] [-y] \"<commit message>\"${NC}"
+    echo -e "\nOptions:"
+    echo -e "  -p NUM    Select prefix number"
+    echo -e "  -y        Auto-confirm commit"
+    echo -e "  -h        Show this help message"
     echo -e "\n${GREEN}Available prefixes:${NC}"
     for i in "${!PREFIXES[@]}"; do
         echo -e "  $((i+1))) ${PREFIXES[$i]}"
     done
-    echo -e "\n${YELLOW}Example: $0 -p 1 \"Updated the balance sheet calculations\"${NC}"
+    echo -e "\n${YELLOW}Example: $0 -p 1 -y \"Updated the balance sheet calculations\"${NC}"
     exit 1
 }
 
 # Parse command line arguments
 prefix_num=8  # Default to "✨ BONUS:"
-while getopts ":p:h" opt; do
+auto_confirm=false
+while getopts ":p:hy" opt; do
     case $opt in
         p) prefix_num="$OPTARG";;
+        y) auto_confirm=true;;
         h) usage;;
         \?) echo -e "${RED}Invalid option: -$OPTARG${NC}"; usage;;
     esac
@@ -78,16 +84,13 @@ trisha_speak() {
 echo -e "\n${YELLOW}Preview:${NC}"
 echo -e "${GREEN}$formatted_message${NC}"
 
-# Auto-confirm if using default prefix
-if [ "$prefix_num" == "8" ]; then
-    do_commit=true
-else
-    # Ask for confirmation for non-default prefixes
+# Determine if we should commit
+do_commit=true
+if ! $auto_confirm && [ "$prefix_num" != "8" ]; then
+    # Ask for confirmation for non-default prefixes when not auto-confirming
     read -p "Proceed with commit? (Y/n): " confirm
     if [[ $confirm =~ ^[Nn]$ ]]; then
         do_commit=false
-    else
-        do_commit=true
     fi
 fi
 
