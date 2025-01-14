@@ -16,17 +16,64 @@ from .types import Context, ContextType
 logger = logging.getLogger(__name__)
 
 class ContextStore:
-    """Manages context storage and retrieval using Qdrant"""
+    """Manages context storage and retrieval using Qdrant vector database.
+    
+    This class provides a high-level interface for storing and retrieving contexts
+    using vector embeddings for similarity search. It uses the Qdrant vector database
+    for efficient storage and retrieval of context data.
+    
+    Attributes:
+        collection_name (str): Name of the Qdrant collection for contexts
+        client (QdrantClient): Client instance for Qdrant operations
+        encoder (SentenceTransformer): Model for encoding contexts into vectors
+        
+    Example:
+        ```python
+        # Initialize context store
+        store = ContextStore(host="localhost", port=6333)
+        
+        # Store a context
+        context = Context(
+            context_id="test-1",
+            data={"test_name": "auth_test"},
+            context_type=ContextType.TEST
+        )
+        await store.store_context(context)
+        
+        # Find similar contexts
+        similar = await store.find_similar_contexts(context)
+        ```
+    """
     
     def __init__(self, host: str = "localhost", port: int = 6333):
-        """Initialize the context store"""
+        """Initialize the context store with Qdrant connection.
+        
+        Args:
+            host (str): Hostname of the Qdrant server. Defaults to "localhost".
+            port (int): Port number of the Qdrant server. Defaults to 6333.
+            
+        Note:
+            The initialization process includes:
+            1. Establishing connection to Qdrant
+            2. Loading the sentence transformer model
+            3. Ensuring the required collection exists
+        """
         self.collection_name = "contexts"
         self.client = QdrantClient(host=host, port=port)
         self.encoder = SentenceTransformer('all-MiniLM-L6-v2')
         self._ensure_collection()
     
     def _ensure_collection(self):
-        """Ensure the contexts collection exists"""
+        """Ensure the contexts collection exists in Qdrant.
+        
+        Creates a new collection if it doesn't exist with appropriate vector configuration
+        for the sentence transformer model being used.
+        
+        Note:
+            Collection configuration includes:
+            - Vector size: 384 (matches encoder model dimensions)
+            - Distance metric: Cosine similarity
+        """
         collections = self.client.get_collections()
         exists = any(c.name == self.collection_name for c in collections.collections)
         
@@ -41,7 +88,21 @@ class ContextStore:
             logger.info(f"Created collection: {self.collection_name}")
     
     def _encode_context(self, context: Context) -> np.ndarray:
-        """Encode a context into a vector embedding"""
+        """Encode a context into a vector embedding using the sentence transformer.
+        
+        Args:
+            context (Context): The context object to encode
+            
+        Returns:
+            np.ndarray: Vector embedding of the context
+            
+        Note:
+            The encoding process combines:
+            1. Context type
+            2. Tags
+            3. Data content
+            Into a single text representation before encoding
+        """
         # Convert context data to string representation
         text = f"{context.metadata.context_type.value} "
         text += f"{' '.join(context.metadata.tags)} "
@@ -52,7 +113,30 @@ class ContextStore:
         return vector
     
     async def store_context(self, context: Context):
-        """Store a context in Qdrant"""
+        """Store a context in Qdrant with its vector embedding.
+        
+        Args:
+            context (Context): The context object to store
+            
+        Raises:
+            Exception: If there's an error during encoding or storage
+            
+        Note:
+            The storage process:
+            1. Encodes the context into a vector
+            2. Prepares payload with metadata
+            3. Upserts into Qdrant collection
+            
+        Example:
+            ```python
+            context = Context(
+                context_id="test-1",
+                data={"result": "passed"},
+                context_type=ContextType.TEST
+            )
+            await store.store_context(context)
+            ```
+        """
         try:
             vector = self._encode_context(context)
             
@@ -90,7 +174,29 @@ class ContextStore:
         limit: int = 5,
         score_threshold: float = 0.7
     ) -> List[Dict[str, Any]]:
-        """Find contexts similar to the given one"""
+        """Find contexts similar to the given one using vector similarity.
+        
+        Args:
+            context (Context): The context to find similar matches for
+            limit (int): Maximum number of results to return. Defaults to 5.
+            score_threshold (float): Minimum similarity score (0-1). Defaults to 0.7.
+            
+        Returns:
+            List[Dict[str, Any]]: List of similar contexts with their metadata
+            
+        Note:
+            Similarity is computed using cosine similarity between vector embeddings.
+            Higher score_threshold means more similar results.
+            
+        Example:
+            ```python
+            similar = await store.find_similar_contexts(
+                context,
+                limit=10,
+                score_threshold=0.8
+            )
+            ```
+        """
         try:
             vector = self._encode_context(context)
             
@@ -108,7 +214,21 @@ class ContextStore:
             return []
     
     async def get_context_by_id(self, context_id: str) -> Optional[Dict[str, Any]]:
-        """Retrieve a context by its ID"""
+        """Retrieve a specific context by its unique identifier.
+        
+        Args:
+            context_id (str): Unique identifier of the context
+            
+        Returns:
+            Optional[Dict[str, Any]]: Context data if found, None otherwise
+            
+        Example:
+            ```python
+            context = await store.get_context_by_id("test-1")
+            if context:
+                print(f"Found context: {context['data']}")
+            ```
+        """
         try:
             results = self.client.scroll(
                 collection_name=self.collection_name,
@@ -136,7 +256,25 @@ class ContextStore:
         context_type: ContextType,
         limit: int = 100
     ) -> List[Dict[str, Any]]:
-        """Find contexts by type"""
+        """Find all contexts of a specific type.
+        
+        Args:
+            context_type (ContextType): Type of contexts to find
+            limit (int): Maximum number of results. Defaults to 100.
+            
+        Returns:
+            List[Dict[str, Any]]: List of matching contexts with their metadata
+            
+        Example:
+            ```python
+            test_contexts = await store.find_contexts_by_type(
+                ContextType.TEST,
+                limit=50
+            )
+            for ctx in test_contexts:
+                print(f"Found test context: {ctx['data']}")
+            ```
+        """
         try:
             results = self.client.scroll(
                 collection_name=self.collection_name,

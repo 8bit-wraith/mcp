@@ -118,7 +118,7 @@ class ToFManager:
                 valid=False,
                 message=f"Missing required fields: {required_fields - set(context.data.keys())}",
                 context_id=context.context_id
-            )
+            ) 
         return ValidationResult(
             valid=True,
             message="Tool context validated successfully",

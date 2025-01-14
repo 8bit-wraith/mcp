@@ -1,0 +1,18 @@
+<invoke name="run_terminal_cmd">
+<parameter name="command">source .venv/bin/activate && pip install pytest pytest-asyncio qdrant-client | cat</parameter>
+<parameter name="explanation">Installing pytest and required dependencies</parameter>
+<parameter name="is_background">false</parameter>
+<parameter name="require_user_approval">true</parameter>
+</invoke>
+
+<invoke name="list_dir">
+<parameter name="explanation">Checking for Python dependency files</parameter>
+<parameter name="relative_workspace_path">.</parameter>
+</invoke>
+
+<invoke name="run_terminal_cmd">
+<parameter name="command">source .venv/bin/activate && cd tests && python -m pytest core/test_tof_system.py -v | cat</parameter>
+<parameter name="explanation">Running the ToF system tests with verbose output</parameter>
+<parameter name="is_background">false</parameter>
+<parameter name="require_user_approval">true</parameter>
+</invoke> 
