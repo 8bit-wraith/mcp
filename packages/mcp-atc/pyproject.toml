@@ -3,6 +3,12 @@ name = "mcp-atc"
 version = "0.1.0"
 description = "MCP Awesome Tool Collection - A powerful toolkit for terminal automation"
 authors = ["Hue & Aye Team <hue@8b.is>"]
+packages = [
+    { include = "mcp_atc", from = "src" }
+]
+
+[tool.poetry]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"

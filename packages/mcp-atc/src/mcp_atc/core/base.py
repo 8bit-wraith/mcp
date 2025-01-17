@@ -1,16 +1,15 @@
 from typing import Dict, Any, Optional
 from abc import ABC, abstractmethod
 import uuid
+from datetime import datetime
 from .context import ToolContext, Participant
-from .tof_manager import ToFManager
 
-class Tool(ABC):
-    """Enhanced base class for all ATC tools with ToF support"""
+class BaseTool(ABC):
+    """Base class for all ATC tools"""
     
     def __init__(self):
         self.contexts: Dict[str, ToolContext] = {}
         self._id = str(uuid.uuid4())
-        self.tof = ToFManager()
     
     @property
     @abstractmethod
@@ -30,7 +29,7 @@ class Tool(ABC):
         return self._id
     
     async def create_session(self, session_id: str, initial_participant: Participant) -> ToolContext:
-        """Create a new tool session with ToF monitoring"""
+        """Create a new tool session"""
         context = ToolContext(
             tool_id=self.tool_id,
             session_id=session_id,
@@ -40,9 +39,6 @@ class Tool(ABC):
             shared_state={}
         )
         self.contexts[session_id] = context
-        
-        # Register with ToF
-        await self.tof.register_context(context)
         return context
     
     async def join_session(self, session_id: str, participant: Participant) -> Optional[ToolContext]:
@@ -55,7 +51,7 @@ class Tool(ABC):
         return context
     
     async def execute(self, session_id: str, command: str, params: Dict[str, Any], participant_id: str) -> Dict[str, Any]:
-        """Execute tool command with ToF validation"""
+        """Execute tool command"""
         if session_id not in self.contexts:
             return {"status": "error", "message": "Session not found"}
             
@@ -74,11 +70,6 @@ class Tool(ABC):
         # Execute the command
         result = await self._execute_command(command, params, context)
         
-        # Run ToF tests
-        test_results = await self.tof.run_context_tests(session_id)
-        if not all(r.passed for r in test_results):
-            result["warnings"] = [r.details for r in test_results if not r.passed]
-        
         # Save context
         context.save()
         
@@ -87,4 +78,4 @@ class Tool(ABC):
     @abstractmethod
     async def _execute_command(self, command: str, params: Dict[str, Any], context: ToolContext) -> Dict[str, Any]:
         """Implement actual command execution"""
-        pass 
+        pass

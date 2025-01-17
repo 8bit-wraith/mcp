@@ -2,7 +2,8 @@ from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any
 import asyncio
-from ..core.plugin import PluginManager
+
+from ..core.plugin_manager import PluginManager
 
 app = FastAPI(title="MCP Awesome Tool Collection")
 plugin_manager = PluginManager()

@@ -13,6 +13,7 @@ This document provides a comprehensive guide to the Model Context Protocol (MCP)
 ## 📡 Enhanced SSH Server
 
 ### Terminal Commands
+
 The SSH server provides advanced terminal session management through WebSocket connections and Tmux integration.
 
 ```typescript
@@ -31,6 +32,7 @@ The SSH server provides advanced terminal session management through WebSocket c
 ```
 
 ### Tmux Integration
+
 ```typescript
 // Create new session
 tmux.createSession("session-name");
@@ -48,9 +50,11 @@ tmux.attachToSession("session-id");
 ## 🧠 Context Management
 
 ### Context Types
+
 The system supports various context types, each with specific validation rules:
 
 1. TEST: Test execution contexts
+
    ```python
    {
      "test_name": "auth_test",
@@ -59,6 +63,7 @@ The system supports various context types, each with specific validation rules:
    ```
 
 2. TOOL: Tool execution contexts
+
    ```python
    {
      "tool_name": "git_analyzer",
@@ -73,6 +78,7 @@ The system supports various context types, each with specific validation rules:
 7. SYSTEM: System state contexts
 
 ### Context Store Operations
+
 ```python
 # Store new context
 await context_store.store_context(context)
@@ -90,6 +96,7 @@ contexts = await context_store.find_contexts_by_tags(["git", "analysis"])
 ## 🤖 Model Management
 
 ### Model Explorer
+
 ```python
 # Discover models for context type
 models = await explorer.discover_models(ContextType.TEST)
@@ -102,6 +109,7 @@ model = await selector.select_optimal_model(ContextType.TEST)
 ```
 
 ### Model Metrics
+
 - Accuracy
 - Latency (ms)
 - Memory Usage (MB)
@@ -112,13 +120,15 @@ model = await selector.select_optimal_model(ContextType.TEST)
 ### WebSocket Endpoints
 
 #### Terminal WebSocket
-```
+
+```url
 ws://localhost:8000/ws/terminal/{session_id}
 ```
 
 Supports command types:
 
 1. Tool Commands:
+
 ```json
 {
   "type": "tool",
@@ -130,6 +140,7 @@ Supports command types:
 ```
 
 2. TMUX Commands:
+
 ```json
 {
   "type": "tmux",
@@ -140,32 +151,38 @@ Supports command types:
 ### REST API Endpoints
 
 #### List Available Tools
-```
+
+```plaintext
 GET /tools
 ```
+
 Returns available tools and descriptions.
 
 Response format:
+
 ```json
 {
   "tools": [
-    {
-      "name": "tool_name",
-      "description": "tool description"
-    }
+      {
+         "name": "tool_name",
+         "description": "tool description"
+      }
   ]
 }
 ```
 
 #### Execute Tool Command
-```
+
+```plaintext
 POST /tool/{tool_name}/{command}
 ```
+
 Execute tool command with parameters.
 
 ## 🎭 Voice System
 
 ### AI Personalities
+
 Three distinct AI personalities with unique characteristics:
 
 1. **Aye** (en-US-ChristopherNeural)
@@ -184,6 +201,7 @@ Three distinct AI personalities with unique characteristics:
    - Natural pitch for authority
 
 ### Voice Commands
+
 ```bash
 # Test all AI voices
 ./scripts/manage.sh voices
@@ -195,11 +213,14 @@ python -c "from src.core.voice import speak, AIPersonality; speak('Hello!', AIPe
 ## 📊 Script Commands
 
 ### Model Management
+
 ```bash
 # List available AI models
 ./scripts/list_models.sh
 ```
+
 Features:
+
 - Real-time model availability checking
 - Colorized output
 - Authentication handling
@@ -207,6 +228,7 @@ Features:
 ### Git Integration
 
 #### Commit System
+
 ```bash
 # Standard commit
 ./scripts/commit.sh "Your commit message"
@@ -226,17 +248,21 @@ Features:
 ```
 
 #### Git Summary
+
 ```bash
 # Get Trisha's insights on recent commits
 ./scripts/git_summary.sh
 ```
+
 Features:
+
 - AI-powered commit analysis
 - Voice feedback from Trisha
 - Colorized output
 - Integration with voice system
 
 ### Project Management
+
 ```bash
 # Interactive menu
 ./scripts/manage.sh menu
@@ -258,6 +284,7 @@ Available commands:
 ```
 
 Features:
+
 - Service management (Qdrant, SSH server, API server)
 - Testing and coverage reports
 - Code formatting (black + isort)
@@ -266,11 +293,14 @@ Features:
 - Trisha's accounting jokes! 🎯
 
 ### Smart Tree
+
 ```bash
 # Generate tree structure
 ./scripts/smart_tree.sh
 ```
+
 Features:
+
 - Respects .gitignore rules
 - Colorized output
 - Directory statistics
@@ -279,6 +309,7 @@ Features:
 ## 🔧 Tool Categories
 
 ### Git Context Builder
+
 ```bash
 # Build context from a repository
 python src/tools/git_context_builder.py --repo-path /path/to/repo --context-name my-context
@@ -294,6 +325,7 @@ python src/tools/git_context_builder.py --context-name my-context --build-relati
 ```
 
 Features:
+
 - Commit analysis and vectorization
 - File content processing
 - Author pattern recognition
@@ -301,12 +333,14 @@ Features:
 - Context analytics and insights
 
 ### Context Generation
+
 ```bash
 # Generate/update context.md
 ./scripts/generate_context.sh
 ```
 
 Features:
+
 - Git history tracking
 - Tag documentation
 - Recent changes log
@@ -314,6 +348,7 @@ Features:
 - Contributor tracking
 
 ### ATC Plugin System
+
 The ATC server supports various tool types:
 
 1. File Tools
@@ -334,6 +369,7 @@ The ATC server supports various tool types:
 ## 🔐 Authentication
 
 Modern authentication methods:
+
 - Voice pattern recognition
 - Location-based trust factors
 - Behavioral patterns

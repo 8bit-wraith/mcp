@@ -5,7 +5,7 @@ import inspect
 from pathlib import Path
 import json
 from .context import ToolContext, Participant
-from .plugin import Tool
+from .base import BaseTool
 from .test_context_store import ContextualTestStore, TestContext
 from .unified_context import ContextManager, UnifiedContext, ContextType
 
