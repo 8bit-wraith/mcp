@@ -34,7 +34,7 @@ export class TmuxService {
         }
     }
     
-    private executeCommand(command: string, args: string[]): Promise<string> {
+    public executeCommand(command: string, args: string[]): Promise<string> {
         return new Promise((resolve, reject) => {
             const tmux = spawn('tmux', [command, ...args]);
             let output = '';

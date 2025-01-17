@@ -47,6 +47,13 @@ class SmartTree:
 
     def _build_tree(self):
         """Build the initial tree structure"""
+        # Add root directory
+        self.nodes[Path('.')] = FileNode(
+            path=Path('.'),
+            is_dir=True,
+            stat_info=self.root.stat()
+        )
+
         for root, dirs, files in os.walk(self.root):
             root_path = Path(root).relative_to(self.root)
             
@@ -70,6 +77,14 @@ class SmartTree:
                         stat_info=full_path.stat()
                     )
 
+    def _human_size(self, size: int) -> str:
+        """Convert size in bytes to human readable format"""
+        for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+            if size < 1024:
+                return f"{size:.1f}{unit}"
+            size /= 1024
+        return f"{size:.1f}PB"
+
     def format_hex_node(self, path: Path, depth: int = 0) -> str:
         """Format a node in hex format with all metadata"""
         node = self.nodes[path]
@@ -83,17 +98,20 @@ class SmartTree:
         time_hex = f"{int(stat_info.st_mtime):x}"
         depth_hex = f"{depth:x}"
         
+        # Get human readable size
+        human_size = self._human_size(stat_info.st_size)
+        
         emoji = self._get_file_emoji(stat_info.st_mode)
         
         if self.use_color:
             return (f"{self.COLORS['depth']}{depth_hex}{self.COLORS['reset']} "
                    f"{self.COLORS['perm']}{perms_hex}{self.COLORS['reset']} "
                    f"{self.COLORS['id']}{uid_hex} {gid_hex}{self.COLORS['reset']} "
-                   f"{self.COLORS['size']}{size_hex}{self.COLORS['reset']} "
+                   f"{self.COLORS['size']}{size_hex} ({human_size}){self.COLORS['reset']} "
                    f"{self.COLORS['time']}{time_hex}{self.COLORS['reset']} "
                    f"{emoji} {path.name}")
         else:
-            return f"{depth_hex} {perms_hex} {uid_hex} {gid_hex} {size_hex} {time_hex} {emoji} {path.name}"
+            return f"{depth_hex} {perms_hex} {uid_hex} {gid_hex} {size_hex} ({human_size}) {time_hex} {emoji} {path.name}"
 
     def display(self, path: Path = None, depth: int = 0) -> str:
         """Display the tree structure"""

@@ -22,6 +22,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# WebSocket connection store
+websocket_connections: Dict[str, WebSocket] = {}
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    session_id = f"session_{len(websocket_connections)}"
+    websocket_connections[session_id] = websocket
+    
+    try:
+        while True:
+            data = await websocket.receive_json()
+            # Echo back the received data for now
+            await websocket.send_json({"status": "ok", "data": data})
+    except Exception as e:
+        print(f"WebSocket error: {e}")
+    finally:
+        if session_id in websocket_connections:
+            del websocket_connections[session_id]
+
 # Active sessions store
 sessions: Dict[str, Any] = {}
 

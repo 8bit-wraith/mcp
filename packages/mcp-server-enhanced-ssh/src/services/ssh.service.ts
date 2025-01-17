@@ -1,15 +1,18 @@
 import { Server, createServer } from 'net';
 import * as pty from 'node-pty';
 import { ATCClient } from './atc.client';
+import { TmuxService } from './tmux.service';
 import { Logger } from '../utils/logger';
 
 export class SSHService {
     private server!: Server;
     private atc: ATCClient;
-    private sessions: Map<string, pty.IPty> = new Map();
+    private tmux: TmuxService;
+    private sessions: Map<string, {shell: pty.IPty; isTmux: boolean}> = new Map();
     
     constructor(private readonly port: number = 2222) {
         this.atc = new ATCClient('ws://localhost:8000/ws');
+        this.tmux = new TmuxService();
     }
     
     async start(): Promise<void> {
@@ -55,15 +58,55 @@ export class SSHService {
     
     private async handleSession(sessionId: string, socket: any): Promise<void> {
         try {
-            const shell = pty.spawn('bash', [], {
-                name: 'xterm-color',
-                cols: 80,
-                rows: 24,
-                cwd: process.env.HOME,
-                env: process.env
-            });
+            // Parse the initial command from the socket data
+            const initialData = socket.read();
+            const command = initialData ? initialData.toString().trim() : '';
+            const isTmux = command.startsWith('tmux');
+            let shell: pty.IPty;
             
-            this.sessions.set(sessionId, shell);
+            if (isTmux) {
+                // Extract tmux command parts
+                const parts = command.split(' ');
+                const tmuxAction = parts[1] || 'new-session';
+                const tmuxArgs = parts.slice(2);
+                
+                if (tmuxAction === 'attach' || tmuxAction === 'attach-session') {
+                    // For attach commands, just attach to the specified session
+                    shell = pty.spawn('tmux', [tmuxAction, ...tmuxArgs], {
+                        name: 'xterm-color',
+                        cols: 80,
+                        rows: 24,
+                        cwd: process.env.HOME,
+                        env: process.env
+                    });
+                } else {
+                    // For other commands (like new-session), create a new session
+                    await this.tmux.createSession(sessionId);
+                    shell = pty.spawn('tmux', ['attach-session', '-t', sessionId], {
+                        name: 'xterm-color',
+                        cols: 80,
+                        rows: 24,
+                        cwd: process.env.HOME,
+                        env: process.env
+                    });
+                }
+            } else {
+                // Non-tmux session, just spawn bash
+                shell = pty.spawn('bash', [], {
+                    name: 'xterm-color',
+                    cols: 80,
+                    rows: 24,
+                    cwd: process.env.HOME,
+                    env: process.env
+                });
+            }
+            
+            this.sessions.set(sessionId, { shell, isTmux });
+            
+            // If we had initial data that wasn't a tmux command, write it to the shell
+            if (!isTmux && initialData) {
+                shell.write(initialData);
+            }
             
             shell.onData((data) => {
                 this.atc.send({ type: 'terminal', sessionId, data });
@@ -74,10 +117,19 @@ export class SSHService {
                 shell.write(data.toString());
             });
             
-            socket.on('close', () => {
-                shell.kill();
-                this.sessions.delete(sessionId);
-                Logger.info(`Session ${sessionId} closed`);
+            socket.on('close', async () => {
+                const session = this.sessions.get(sessionId);
+                if (!session) return;
+                
+                if (!session.isTmux) {
+                    session.shell.kill();
+                    this.sessions.delete(sessionId);
+                    Logger.info(`Session ${sessionId} closed`);
+                } else {
+                    Logger.info(`Socket closed but keeping tmux session ${sessionId} alive`);
+                    // Detach from tmux session but keep it running
+                    await this.tmux.executeCommand('detach-client', ['-s', sessionId]);
+                }
             });
             
             this.atc.on(`data_${sessionId}`, (data: string) => {
@@ -93,8 +145,11 @@ export class SSHService {
     async stop(): Promise<void> {
         try {
             // Kill all active sessions
-            for (const [sessionId, shell] of this.sessions) {
-                shell.kill();
+            for (const [sessionId, session] of this.sessions) {
+                if (session.isTmux) {
+                    await this.tmux.killSession(sessionId);
+                }
+                session.shell.kill();
                 this.sessions.delete(sessionId);
                 Logger.info(`Session ${sessionId} terminated`);
             }

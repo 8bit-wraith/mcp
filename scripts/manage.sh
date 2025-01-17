@@ -78,19 +78,61 @@ trisha_says() {
     echo -e "${PURPLE}Tri says: $RANDOM_JOKE${NC}"
 }
 
-# Check for required tools
+# Check for required tools, ports, and services
 check_requirements() {
     local missing=0
     command -v python3 >/dev/null 2>&1 || { log "ERROR" "Python 3 is required but not installed"; missing=1; }
     command -v poetry >/dev/null 2>&1 || { log "ERROR" "Poetry is required but not installed"; missing=1; }
-    command -v docker >/dev/null 2>&1 || { log "ERROR" "Docker is required but not installed"; missing=1; }
     command -v node >/dev/null 2>&1 || { log "ERROR" "Node.js is required but not installed"; missing=1; }
     command -v pnpm >/dev/null 2>&1 || { log "ERROR" "pnpm is required but not installed"; missing=1; }
+    command -v lsof >/dev/null 2>&1 || { log "ERROR" "lsof is required but not installed"; missing=1; }
 
     if [ $missing -eq 1 ]; then
         log "ERROR" "Please install missing requirements and try again!"
         exit 1
     fi
+
+    # Check if Docker is available (optional)
+    if ! command -v docker >/dev/null 2>&1; then
+        log "WARN" "Docker not found - will use external Qdrant if available"
+    else
+        # Check if Docker daemon is running (optional)
+        docker info >/dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            log "WARN" "Docker daemon not running - will use external Qdrant if available"
+        fi
+    fi
+}
+
+# Check if a port is in use
+check_port() {
+    local port=$1
+    if lsof -i :$port > /dev/null 2>&1; then
+        return 0  # Port is in use
+    else
+        return 1  # Port is free
+    fi
+}
+
+# Kill process using a port
+kill_port() {
+    local port=$1
+    local pid=$(lsof -t -i :$port)
+    if [ ! -z "$pid" ]; then
+        log "INFO" "Killing process using port $port (PID: $pid)"
+        kill -9 $pid 2>/dev/null
+        sleep 1
+    fi
+}
+
+# Cleanup ports before starting services
+cleanup_ports() {
+    local ports=($QD_PORT $SSH_PORT $API_PORT)
+    for port in "${ports[@]}"; do
+        if check_port $port; then
+            kill_port $port
+        fi
+    done
 }
 
 # Service Management Functions
@@ -98,6 +140,9 @@ check_requirements() {
 
 start_services() {
     log "INFO" "Starting all services..."
+    
+    # Clean up any stale ports first
+    cleanup_ports
     
     # Start Qdrant
     start_qdrant
@@ -237,32 +282,76 @@ stop_services() {
 }
 
 start_qdrant() {
-    if ! docker ps | grep -q qdrant; then
-        log "INFO" "Starting Qdrant vector database..."
-        docker run -d -p $QD_PORT:6333 --name qdrant $QD_IMAGE
-        if [ $? -eq 0 ]; then
-            log "SUCCESS" "Qdrant started successfully!"
-        else
-            log "ERROR" "Failed to start Qdrant"
-            return 1
-        fi
+    # First check if something is already running on Qdrant port
+    if check_port $QD_PORT; then
+        log "INFO" "Port $QD_PORT is already in use, assuming Qdrant is running externally"
+        return 0
+    fi
+
+    # Verify Docker is running first
+    docker info >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        log "ERROR" "Cannot start Qdrant: Docker daemon is not running"
+        return 1
+    fi
+
+    # Check if container already exists
+    if docker ps -a | grep -q qdrant; then
+        log "INFO" "Removing existing Qdrant container..."
+        docker rm -f qdrant >/dev/null 2>&1
+    fi
+
+    # Start new container
+    log "INFO" "Starting Qdrant vector database..."
+    if docker run -d -p $QD_PORT:6333 --name qdrant $QD_IMAGE >/dev/null 2>&1; then
+        # Wait for container to be healthy
+        for i in {1..10}; do
+            if docker ps | grep -q qdrant; then
+                log "SUCCESS" "Qdrant started successfully!"
+                return 0
+            fi
+            sleep 1
+        done
+        log "ERROR" "Qdrant container failed to start properly"
+        return 1
     else
-        log "INFO" "Qdrant is already running"
+        log "ERROR" "Failed to start Qdrant container"
+        return 1
     fi
 }
 
 stop_qdrant() {
+    # Check if port is in use
+    if ! check_port $QD_PORT; then
+        log "INFO" "No service found on Qdrant port $QD_PORT"
+        return 0
+    fi
+
+    # Verify Docker is running first
+    docker info >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        log "WARN" "Cannot check Docker Qdrant status: Docker daemon is not running"
+        log "INFO" "Assuming external Qdrant instance, skipping stop"
+        return 0
+    fi
+
+    # Check if container exists and stop it
     if docker ps | grep -q qdrant; then
-        log "INFO" "Stopping Qdrant..."
-        docker stop qdrant && docker rm qdrant
-        if [ $? -eq 0 ]; then
-            log "SUCCESS" "Qdrant stopped and removed successfully!"
+        log "INFO" "Stopping Docker-managed Qdrant..."
+        if docker stop qdrant >/dev/null 2>&1; then
+            log "INFO" "Removing Qdrant container..."
+            if docker rm qdrant >/dev/null 2>&1; then
+                log "SUCCESS" "Docker-managed Qdrant stopped and removed successfully!"
+            else
+                log "ERROR" "Failed to remove Qdrant container"
+                return 1
+            fi
         else
             log "ERROR" "Failed to stop Qdrant"
             return 1
         fi
     else
-        log "INFO" "Qdrant is not running"
+        log "INFO" "Found Qdrant on port $QD_PORT but not managed by Docker, leaving it running"
     fi
 }
 
@@ -270,10 +359,15 @@ status_services() {
     log "INFO" "Checking services status..."
     
     # Check Qdrant
-    if docker ps | grep -q qdrant; then
-        log "SUCCESS" "✅ Qdrant is running"
+    if check_port $QD_PORT; then
+        # Check if it's Docker-managed
+        if docker info >/dev/null 2>&1 && docker ps 2>/dev/null | grep -q qdrant; then
+            log "SUCCESS" "✅ Docker-managed Qdrant is running"
+        else
+            log "SUCCESS" "✅ External Qdrant instance detected on port $QD_PORT"
+        fi
     else
-        log "WARN" "❌ Qdrant is not running"
+        log "WARN" "❌ No Qdrant instance found"
     fi
     
     # Check SSH server
