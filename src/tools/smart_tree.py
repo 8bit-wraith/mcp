@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import stat
 import json
 from pathlib import Path
 from typing import Dict, List, Set, Optional
@@ -11,16 +12,28 @@ class FileNode:
     """Represents a file or directory in the tree with additional context"""
     path: Path
     is_dir: bool
+    stat_info: os.stat_result = None
     references: Set[Path] = field(default_factory=set)
     referenced_by: Set[Path] = field(default_factory=set)
     imports: Set[str] = field(default_factory=set)
     imported_by: Set[Path] = field(default_factory=set)
 
 class SmartTree:
-    def __init__(self, root_path: str):
+    COLORS = {
+        'depth': '\033[36m',  # cyan for depth
+        'perm': '\033[33m',   # yellow for permissions
+        'id': '\033[35m',     # magenta for uid/gid
+        'size': '\033[32m',   # green for size
+        'time': '\033[34m',   # blue for timestamp
+        'reset': '\033[0m'    # reset
+    }
+
+    def __init__(self, root_path: str, display_mode: str = 'classic', use_color: bool = True):
         self.root = Path(root_path).resolve()
         self.nodes: Dict[Path, FileNode] = {}
         self.gitignore_patterns = self._load_gitignore()
+        self.display_mode = display_mode
+        self.use_color = use_color
         
     def _load_gitignore(self) -> List[str]:
         """Load .gitignore patterns if present"""
@@ -67,6 +80,17 @@ class SmartTree:
                 node.references.add(other_path)
                 self.nodes[other_path].referenced_by.add(rel_path)
 
+    def _get_file_emoji(self, mode):
+        """Get appropriate emoji for file type"""
+        if stat.S_ISDIR(mode): return "📁"
+        elif stat.S_ISLNK(mode): return "🔗"
+        elif mode & stat.S_IXUSR: return "⚙️"
+        elif stat.S_ISSOCK(mode): return "🔌"
+        elif stat.S_ISFIFO(mode): return "📝"
+        elif stat.S_ISBLK(mode): return "💾"
+        elif stat.S_ISCHR(mode): return "📺"
+        else: return "📄"
+
     def build(self):
         """Build the smart tree structure"""
         # First pass: collect all files and directories
@@ -76,13 +100,15 @@ class SmartTree:
             # Add directories
             if root_path != Path('.'):
                 if not self._should_ignore(self.root / root_path):
-                    self.nodes[root_path] = FileNode(root_path, True)
+                    stat_info = (self.root / root_path).stat()
+                    self.nodes[root_path] = FileNode(root_path, True, stat_info)
 
             # Add files
             for file in files:
                 file_path = root_path / file
                 if not self._should_ignore(self.root / file_path):
-                    self.nodes[file_path] = FileNode(file_path, False)
+                    stat_info = (self.root / file_path).stat()
+                    self.nodes[file_path] = FileNode(file_path, False, stat_info)
 
         # Second pass: analyze relationships
         for path, node in self.nodes.items():
@@ -94,6 +120,35 @@ class SmartTree:
                         self._scan_file_references(path, content)
                 except Exception:
                     pass
+
+    def _format_hex_node(self, path: Path, depth: int = 0) -> str:
+        """Format a node in hex format with all metadata"""
+        node = self.nodes[path]
+        stat_info = node.stat_info
+        
+        # Convert values to hex
+        perms_hex = f"{stat_info.st_mode & 0o777:03x}"
+        uid_hex = f"{stat_info.st_uid:x}"
+        gid_hex = f"{stat_info.st_gid:x}"
+        size_hex = f"{stat_info.st_size:x}"
+        time_hex = f"{int(stat_info.st_mtime):x}"
+        depth_hex = f"{depth:x}"
+        
+        emoji = self._get_file_emoji(stat_info.st_mode)
+        
+        refs = ""
+        if node.references:
+            refs = f" → {', '.join(str(r) for r in sorted(node.references))}"
+        
+        if self.use_color:
+            return (f"{self.COLORS['depth']}{depth_hex}{self.COLORS['reset']} "
+                   f"{self.COLORS['perm']}{perms_hex}{self.COLORS['reset']} "
+                   f"{self.COLORS['id']}{uid_hex} {gid_hex}{self.COLORS['reset']} "
+                   f"{self.COLORS['size']}{size_hex}{self.COLORS['reset']} "
+                   f"{self.COLORS['time']}{time_hex}{self.COLORS['reset']} "
+                   f"{emoji} {path.name}{refs}")
+        else:
+            return f"{depth_hex} {perms_hex} {uid_hex} {gid_hex} {size_hex} {time_hex} {emoji} {path.name}{refs}"
 
     def _format_node(self, path: Path, prefix: str = "", is_last: bool = True) -> List[str]:
         """Format a node for display with its relationships"""
@@ -121,8 +176,40 @@ class SmartTree:
                 
         return lines
 
+    def _display_hex(self, path: Optional[Path] = None, depth: int = 0) -> str:
+        """Display the tree in hex format"""
+        if path is None:
+            path = Path('.')
+            
+        result = []
+        if path == Path('.'):
+            root_stat = self.root.stat()
+            result.append(self._format_hex_node(path, depth))
+            
+        # Get all immediate children
+        children = sorted([
+            p for p in self.nodes.keys()
+            if p.parent == path and p != path
+        ])
+        
+        # Display each child
+        for child in children:
+            result.append(self._format_hex_node(child, depth + 1))
+            
+            # Recurse into directories
+            if self.nodes[child].is_dir:
+                result.extend(self._display_hex(child, depth + 1))
+                
+        return "\n".join(result)
+
     def display(self, path: Optional[Path] = None, prefix: str = "") -> str:
-        """Display the smart tree starting from the given path"""
+        """Display the smart tree in selected format"""
+        if self.display_mode == 'hex':
+            return self._display_hex(path)
+        return self._display_classic(path, prefix)
+
+    def _display_classic(self, path: Optional[Path] = None, prefix: str = "") -> str:
+        """Classic tree display format"""
         if path is None:
             path = Path('.')
             
@@ -131,7 +218,7 @@ class SmartTree:
             result.append(self.root.name)
             prefix = ""
         
-        # Get all immediate children of the current path
+        # Get all immediate children
         children = sorted([
             p for p in self.nodes.keys()
             if p.parent == path and p != path
@@ -145,15 +232,23 @@ class SmartTree:
             # Recurse into directories
             if self.nodes[child].is_dir:
                 next_prefix = prefix + ("    " if is_last else "│   ")
-                result.extend(self.display(child, next_prefix))
+                result.extend(self._display_classic(child, next_prefix))
                 
         return "\n".join(result)
 
 def main():
     """Main entry point"""
-    tree = SmartTree(os.getcwd())
+    import argparse
+    parser = argparse.ArgumentParser(description='Enhanced tree display with hex format option')
+    parser.add_argument('path', nargs='?', default='.', help='Root path to display')
+    parser.add_argument('--hex', action='store_true', help='Use hex format display')
+    parser.add_argument('--no-color', action='store_true', help='Disable color output')
+    args = parser.parse_args()
+
+    mode = 'hex' if args.hex else 'classic'
+    tree = SmartTree(args.path, display_mode=mode, use_color=not args.no_color)
     tree.build()
     print(tree.display())
 
 if __name__ == "__main__":
-    main() 
+    main()
