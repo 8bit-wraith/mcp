@@ -1,4 +1,5 @@
 # 🚀 Essential MCP (Model Context Protocol)
+[![smithery badge](https://smithery.ai/badge/@8bit-wraith/mcp)](https://smithery.ai/server/@8bit-wraith/mcp)
 
 Welcome to the Essential MCP workspace! This is where Hue and Aye collaborate to create amazing MCP implementations. We're building a suite of tools that make AI-human interaction more powerful, contextual, and fun!
 
@@ -79,6 +80,14 @@ An innovative testing approach that:
 - mypy for type checking
 
 ## 🚀 Getting Started
+
+### Installing via Smithery
+
+To install Essential MCP for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@8bit-wraith/mcp):
+
+```bash
+npx -y @smithery/cli install @8bit-wraith/mcp --client claude
+```
 
 ### Prerequisites
 - Python 3.11 or higher
