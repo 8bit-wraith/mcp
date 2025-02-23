@@ -89,3 +89,16 @@ id_ecdsa.pub
 id_ed25519
 id_ed25519.pub
 known_hosts
+
+authorized_keys
+ssh_host_*
+ssh_config
+ssh_known_hosts
+
+# Tmux
+.tmux/
+.tmux-sockets/
+.tmux-resurrect/
+
+# Cursor
+.cursorrules.md
