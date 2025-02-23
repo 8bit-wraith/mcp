@@ -98,68 +98,106 @@ An innovative testing approach that:
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### Installation Options
+
+#### 1. NPM Installation (Recommended for SSH Server Only)
+```bash
+# Install the SSH server globally
+npm install -g @essential-mcp/server-enhanced-ssh
+
+# Create config directory
+mkdir -p ~/.mcp/ssh/config
+
+# Generate SSH host keys
+ssh-keygen -t rsa -f ~/.mcp/ssh/config/ssh_host_rsa_key -N ""
+
+# Start the server
+mcp-ssh-server
+```
+
+#### 2. Source Installation (Full Development Setup)
+
+##### Prerequisites
 - Python 3.11 or higher (like Elvis's high notes!)
 - Node.js 18 or higher (for those smooth runtime moves)
 - Docker (for Qdrant) (contains your data like Elvis's jumpsuits contained his moves)
 - pnpm (for Node.js packages) (faster than Elvis's "Jailhouse Rock")
 - Poetry (for Python packages) (because even code needs rhythm)
 
-### 1. Clone the repository:
+##### Step 1: Install Prerequisites
 ```bash
+# Install Node.js and Python prerequisites
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs python3.11 python3.11-venv
+
+# Install pnpm and poetry
+npm install -g pnpm
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+##### Step 2: Clone and Install
+```bash
+# Clone the repository
 git clone https://github.com/8bit-wraith/mcp.git
 cd mcp
-```
-
-### 2. Set up Python environment:
-```bash
-# Install Poetry if you haven't already
-curl -sSL https://install.python-poetry.org | python3 -
-
-# Create and activate virtual environment
-poetry env use python3.11
-poetry shell
-
-# Install dependencies
-poetry install
-```
-
-### 3. Set up Node.js environment:
-```bash
-# Install pnpm if you haven't already
-npm install -g pnpm
 
 # Install Node.js dependencies
 pnpm install
+
+# Install Python dependencies
+poetry install
+poetry shell
 ```
 
-### 4. Start the services:
-
-#### Start Qdrant:
+##### Step 3: Build and Configure
 ```bash
-# Trisha's Note: Vector storage is like a filing cabinet for AI thoughts! 📁
+# Build the SSH server
+cd packages/mcp-server-enhanced-ssh
+pnpm run build
+cd ../..
+
+# Configure SSH
+mkdir -p ~/.mcp/ssh/config
+ssh-keygen -t rsa -f ~/.mcp/ssh/config/ssh_host_rsa_key -N ""
+```
+
+##### Step 4: Start Services
+```bash
+# Start Qdrant
 docker run -d -p 6333:6333 -v $(pwd)/qdrant_data:/qdrant/storage qdrant/qdrant
+
+# Start Python API (in one terminal)
+poetry run python -m packages.mcp-atc.src.api.main
+
+# Start SSH server (in another terminal)
+pnpm run ssh:dev
 ```
 
-#### Start the SSH server:
+### Publishing to NPM
+
+Want to publish your own version? Here's how:
+
+1. Update version in package.json:
 ```bash
-# From the poetry shell
-python -m packages.mcp-server-enhanced-ssh
+cd packages/mcp-server-enhanced-ssh
+pnpm version patch # or minor/major
 ```
 
-#### Start the API server:
+2. Build the package:
 ```bash
-# From another poetry shell
-python -m packages.mcp-atc.src.api.main
+pnpm run build
 ```
 
-### 5. Run tests:
+3. Publish to NPM:
 ```bash
-# Trisha says: "Test early, test often, and never cook the books!" 📊
-./scripts/manage.sh test
+# For first-time publishing
+npm publish --access public
+
+# For updates
+npm publish
 ```
 
-### 6. Development Commands:
+### Development Commands
 
 ```bash
 # Start all services
@@ -178,10 +216,10 @@ python -m packages.mcp-atc.src.api.main
 ./scripts/manage.sh format
 ```
 
-### 7. Verify Installation:
+### Verify Installation
 - Qdrant UI: http://localhost:6333/dashboard
 - API Docs: http://localhost:8000/docs
-- SSH Server: localhost:2222
+- SSH Server: localhost:6480 (default port)
 
 ### Troubleshooting:
 1. If you see port conflicts, check if services are already running:

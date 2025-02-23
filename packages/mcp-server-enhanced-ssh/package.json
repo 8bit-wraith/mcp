@@ -1,8 +1,34 @@
 {
   "name": "@essential-mcp/server-enhanced-ssh",
   "version": "0.1.0",
-  "description": "Enhanced SSH server for MCP",
+  "description": "Enhanced SSH server for MCP with Tmux integration and Claude.app support",
   "main": "dist/index.js",
+  "bin": {
+    "mcp-ssh-server": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "mcp",
+    "ssh",
+    "tmux",
+    "claude",
+    "ai",
+    "collaboration"
+  ],
+  "author": "Hue & Aye Team <hue@8b.is>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/8bit-wraith/mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/8bit-wraith/mcp/issues"
+  },
+  "homepage": "https://github.com/8bit-wraith/mcp#readme",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
