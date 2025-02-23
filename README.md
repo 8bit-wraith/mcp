@@ -15,6 +15,7 @@ Welcome to the Essential MCP workspace! This is where Hue and Aye collaborate to
 ## 🎸 Why MCP? (The Elvis Connection)
 
 Just as Elvis revolutionized music by bridging different styles and bringing people together, MCP revolutionizes AI-human interaction by:
+
 - Breaking down communication barriers (like Elvis broke down musical barriers)
 - Creating seamless integration (smoother than Elvis's dance moves)
 - Building lasting connections (as timeless as "Love Me Tender")
@@ -26,14 +27,18 @@ Just as Elvis revolutionized music by bridging different styles and bringing peo
 ### 📦 Packages
 
 #### MCP Server Enhanced SSH
+
 A powerful SSH server enabling secure remote command execution with:
+
 - Persistent TMUX sessions (as persistent as Elvis's legacy!)
 - Multi-window support (like having multiple Elvis concerts at once)
 - Session sharing capabilities
 - Smart session recovery
 
 #### MCP Awesome Tool Collection (ATC)
+
 A Python-powered API that serves as our central hub for all tools:
+
 - Plugin-based architecture
 - Real-time WebSocket communication
 - Tool discovery and management
