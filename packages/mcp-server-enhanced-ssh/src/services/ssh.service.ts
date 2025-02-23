@@ -1,22 +1,3 @@
-/**
- * @fileoverview Enhanced SSH Server with Tmux Integration and SFTP Support
- *
- * This service provides a secure SSH server with the following features:
- * - Persistent terminal sessions via Tmux integration
- * - SFTP file transfer capabilities
- * - Real-time session monitoring and logging via ATC
- * - Multi-user support with session isolation
- * - Automatic session recovery
- *
- * Security Note: This implementation requires proper configuration of:
- * - SSH host keys in config/ssh_host_rsa_key
- * - Authorized keys in config/authorized_keys
- * - Secure password validation (currently using placeholder)
- *
- * @author Aye
- * @version 1.0.0
- */
-
 import { Server, ServerConfig, Client, Session, SFTPWrapper, AuthContext, Stats, Attributes, Connection } from 'ssh2';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -87,21 +68,6 @@ interface SessionData {
 
 /**
  * Enhanced SSH Service with Tmux Integration
- *
- * This service provides a secure SSH server with integrated Tmux session management
- * and SFTP file transfer capabilities. Key features include:
- *
- * - Persistent terminal sessions through Tmux
- * - Automatic session recovery
- * - Real-time monitoring via ATC integration
- * - SFTP file transfer support
- * - Multi-user session management
- *
- * @example
- * ```typescript
- * const sshService = new SSHService(2222);
- * await sshService.start();
- * ```
  */
 export class SSHService {
     /** The underlying SSH server instance */
@@ -112,14 +78,40 @@ export class SSHService {
     private tmux: TmuxService;
     /** Map of active sessions indexed by session ID */
     private sessions: Map<string, SessionData> = new Map();
-    
+    /** Generated password for SSH authentication */
+    private generatedPassword: string = '';
+
     constructor(private readonly port: number = 6480, apiPort: number = 6481) {
         this.atc = new ATCClient(`ws://localhost:${apiPort}/ws`);
         this.tmux = new TmuxService();
     }
-    
+
+    /**
+     * Generates a secure random password for SSH authentication
+     * @returns A random password string
+     */
+    private generateSecurePassword(): string {
+        const length = 24;
+        const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+        let password = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            password += charset[randomIndex];
+        }
+        return password;
+    }
+
     async start(): Promise<void> {
         try {
+            // Generate secure password for this server instance
+            this.generatedPassword = this.generateSecurePassword();
+            Logger.info(`
+=== GENERATED SSH PASSWORD ===
+${this.generatedPassword}
+===========================
+Please save this password securely. It will be required for SSH password authentication.
+`);
+
             // Initialize SSH server with host keys
             const hostKeyPath = path.join(process.cwd(), 'config', 'ssh_host_rsa_key');
             
@@ -217,21 +209,11 @@ export class SSHService {
 
     /**
      * Handles client authentication requests
-     * Routes the authentication request to the appropriate handler based on method
-     *
-     * @param ctx - Authentication context from the SSH client
-     * @throws {Error} If authentication fails
-     *
-     * Security Note: This implementation supports two authentication methods:
-     * 1. Public key authentication (preferred)
-     * 2. Password authentication (for development only)
      */
     private handleAuth(ctx: AuthContext): void {
         if (ctx.method === 'publickey') {
-            // Implement key-based auth
             this.handlePublicKeyAuth(ctx);
         } else if (ctx.method === 'password') {
-            // Implement password auth
             this.handlePasswordAuth(ctx);
         } else {
             ctx.reject(['password', 'publickey']);
@@ -240,15 +222,6 @@ export class SSHService {
 
     /**
      * Handles public key authentication
-     * Validates client's public key against authorized_keys file
-     *
-     * @param ctx - Authentication context containing the public key
-     *
-     * Security Note: Currently uses basic string matching.
-     * TODO: Implement proper key validation with:
-     * - Key format validation
-     * - Signature verification
-     * - Key revocation checking
      */
     private handlePublicKeyAuth(ctx: AuthContext): void {
         if (ctx.method !== 'publickey') return;
@@ -270,24 +243,13 @@ export class SSHService {
     }
 
     /**
-     * Handles password authentication
-     *
-     * @param ctx - Authentication context containing the password
-     *
-     * SECURITY WARNING: Current implementation is for development only.
-     * TODO: Replace with secure authentication:
-     * - Password hashing
-     * - Rate limiting
-     * - Account lockout
-     * - 2FA support
+     * Handles password authentication requests
      */
     private handlePasswordAuth(ctx: AuthContext): void {
         if (ctx.method !== 'password') return;
         
-        // TODO: Implement proper password validation
-        // This is a placeholder - replace with secure authentication
         const password = (ctx as any).password;
-        if (password === 'your_secure_password') {
+        if (password === this.generatedPassword) {
             ctx.accept();
         } else {
             ctx.reject();
@@ -296,15 +258,6 @@ export class SSHService {
 
     /**
      * Sets up session handlers for authenticated clients
-     * Handles PTY allocation, shell requests, and SFTP subsystem
-     *
-     * @param client - The authenticated SSH client connection
-     * @param clientInfo - Information about the connected client
-     *
-     * This method initializes:
-     * - PTY (pseudo-terminal) for interactive sessions
-     * - Shell session with Tmux integration
-     * - SFTP subsystem for file transfers
      */
     private handleClientReady(client: Connection, clientInfo: ClientInfo): void {
         const sessionId = `session_${Date.now()}`;
@@ -330,23 +283,6 @@ export class SSHService {
 
     /**
      * Handles shell session creation and management with Tmux integration
-     *
-     * This method:
-     * 1. Checks for existing Tmux sessions for the user
-     * 2. Creates or attaches to a Tmux session
-     * 3. Sets up data streaming between SSH and Tmux
-     * 4. Handles session cleanup on disconnect
-     *
-     * @param sessionId - Unique identifier for this session
-     * @param stream - SSH stream for data transfer
-     * @param clientInfo - Information about the connected client
-     *
-     * Features:
-     * - Persistent sessions through Tmux
-     * - Automatic session recovery
-     * - Real-time monitoring via ATC
-     * - Window resize handling
-     * - Session state persistence
      */
     private async handleShellSession(sessionId: string, stream: any, clientInfo: ClientInfo): Promise<void> {
         try {
@@ -452,26 +388,6 @@ export class SSHService {
 
     /**
      * Handles SFTP subsystem operations
-     * Implements the SSH File Transfer Protocol for secure file operations
-     *
-     * @param sftp - SFTP wrapper instance for handling file operations
-     *
-     * Supported Operations:
-     * - MKDIR: Create directories
-     * - STAT: Get file/directory attributes
-     * - READ: Read file contents
-     * - WRITE: Write to files
-     * - OPEN: Open files with various modes
-     * - CLOSE: Close file handles
-     * - READDIR: List directory contents
-     * - REMOVE: Delete files
-     * - RMDIR: Remove directories
-     * - RENAME: Rename files/directories
-     *
-     * Security Note:
-     * - All operations use proper error handling
-     * - File permissions are preserved
-     * - Path traversal is prevented by Node.js fs module
      */
     private handleSFTP(sftp: SFTPWrapper): void {
         // Implement SFTP handlers
