@@ -98,8 +98,6 @@ An innovative testing approach that:
 
 ## 🚀 Getting Started
 
-> Trisha's Pro Tip: "Setting up MCP is easier than explaining why the office coffee budget tripled last month!" 😅
-
 ### Prerequisites
 - Python 3.11 or higher (like Elvis's high notes!)
 - Node.js 18 or higher (for those smooth runtime moves)
