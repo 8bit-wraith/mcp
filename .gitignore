@@ -71,6 +71,21 @@ tmp/
 temp/
 
 # Qdrant
-qdrant_storage/ 
+qdrant_storage/
 context.md
 .cursorrules.md
+
+# SSH Keys and Config
+**/config/ssh_host_*
+**/config/authorized_keys
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+id_dsa
+id_dsa.pub
+id_ecdsa
+id_ecdsa.pub
+id_ed25519
+id_ed25519.pub
+known_hosts
