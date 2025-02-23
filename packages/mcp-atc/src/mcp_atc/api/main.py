@@ -1,7 +1,9 @@
-from fastapi import FastAPI, WebSocket, HTTPException
+from fastapi import FastAPI, WebSocket, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any
 import asyncio
+from sse_starlette.sse import EventSourceResponse
+from datetime import datetime
 
 from ..core.plugin_manager import PluginManager
 
@@ -13,14 +15,60 @@ async def startup_event():
     """Load all tools on startup"""
     await plugin_manager.load_tools()
 
-# Enable CORS
+# Enable CORS with specific origins for SSE
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # In production, replace with specific origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Event store for SSE
+event_subscribers: Dict[str, asyncio.Queue] = {}
+
+async def event_generator(request: Request, client_id: str):
+    """Generate events for SSE streaming"""
+    if client_id not in event_subscribers:
+        event_subscribers[client_id] = asyncio.Queue()
+    
+    try:
+        while True:
+            if await request.is_disconnected():
+                break
+                
+            # Get message from queue
+            message = await event_subscribers[client_id].get()
+            
+            # Yield message in SSE format
+            yield {
+                "event": "message",
+                "data": message,
+                "id": datetime.now().isoformat()
+            }
+    except asyncio.CancelledError:
+        pass
+    finally:
+        # Cleanup when client disconnects
+        if client_id in event_subscribers:
+            del event_subscribers[client_id]
+
+@app.get("/events/{client_id}")
+async def sse_endpoint(request: Request, client_id: str):
+    """SSE endpoint for real-time updates"""
+    event_source = EventSourceResponse(
+        event_generator(request, client_id),
+        ping=20000  # Send ping every 20 seconds to keep connection alive
+    )
+    return event_source
+
+async def broadcast_event(event_data: Dict[str, Any], target_client: str = None):
+    """Broadcast event to all or specific client"""
+    if target_client and target_client in event_subscribers:
+        await event_subscribers[target_client].put(event_data)
+    else:
+        for queue in event_subscribers.values():
+            await queue.put(event_data)
 
 # WebSocket connection store
 websocket_connections: Dict[str, WebSocket] = {}
@@ -71,8 +119,17 @@ async def terminal_websocket(websocket: WebSocket, session_id: str):
 
 @app.post("/tool/{tool_name}/{command}")
 async def execute_tool(tool_name: str, command: str, params: Dict[str, Any]):
-    """Execute a specific tool command"""
+    """Execute a specific tool command and broadcast result via SSE"""
     result = await plugin_manager.execute_tool(tool_name, command, params)
+    
+    # Broadcast tool execution result to all clients
+    await broadcast_event({
+        "type": "tool_execution",
+        "tool": tool_name,
+        "command": command,
+        "result": result
+    })
+    
     if result["status"] == "error":
         raise HTTPException(status_code=400, detail=result["message"])
     return result

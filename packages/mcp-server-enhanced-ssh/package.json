@@ -10,7 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/ssh2": "^1.15.4",
     "node-pty": "^1.0.0",
+    "ssh2": "^1.16.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
@@ -20,5 +22,13 @@
     "jest": "^29.7.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "node-pty"
+    ],
+    "onlyBuiltDependencies": [
+      "node-pty"
+    ]
   }
 }

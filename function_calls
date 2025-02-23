@@ -1,6 +1,6 @@
 <invoke name="run_terminal_cmd">
-<parameter name="command">source .venv/bin/activate && pip install pytest pytest-asyncio qdrant-client | cat</parameter>
-<parameter name="explanation">Installing pytest and required dependencies</parameter>
+<parameter name="command">mkdir -p backups && cp claudeapp-config/claude_desktop_config.json backups/claude_desktop_config.json.bak</parameter>
+<parameter name="explanation">Creating a backup of the existing config</parameter>
 <parameter name="is_background">false</parameter>
 <parameter name="require_user_approval">true</parameter>
 </invoke>
@@ -11,8 +11,626 @@
 </invoke>
 
 <invoke name="run_terminal_cmd">
+<parameter name="command">source .venv/bin/activate && pip install pytest pytest-asyncio qdrant-client | cat</parameter>
+<parameter name="explanation">Installing pytest and required dependencies</parameter>
+<parameter name="is_background">false</parameter>
+<parameter name="require_user_approval">true</parameter>
+</invoke>
+
+<invoke name="run_terminal_cmd">
 <parameter name="command">source .venv/bin/activate && cd tests && python -m pytest core/test_tof_system.py -v | cat</parameter>
 <parameter name="explanation">Running the ToF system tests with verbose output</parameter>
 <parameter name="is_background">false</parameter>
 <parameter name="require_user_approval">true</parameter>
-</invoke> 
+</invoke>
+
+<invoke name="edit_file">
+<parameter name="target_file">claudeapp-config/claude_desktop_config.json</parameter>
+<parameter name="instructions">I will update the config with Trisha's style comments and organization.</parameter>
+<parameter name="blocking">true</parameter>
+<parameter name="code_edit">{
+  // 🎯 MCP Server Configuration - Trisha's Favorite Setup! 
+  "mcpServers": {
+    // 🧠 Memory Management
+    "@modelcontextprotocol-server-memory": {
+      "runtime": "node",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {
+        // Trisha says: "Memory is like a good ledger - keep it organized!" 📚
+        "MAX_MEMORY_MB": "1024",
+        "CLEANUP_INTERVAL": "3600"
+      }
+    },
+
+    // 🔌 Enhanced SSH - Because Terminal Should Be Fun!
+    "@modelcontextprotocol-server-enhanced-ssh": {
+      "runtime": "node",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-enhanced-ssh"],
+      "env": {
+        // Trisha's note: "Port 8022 is like my favorite calculator - reliable!" 🔢
+        "PORT": "8022",
+        "TMUX_ENABLED": "true",
+        "SESSION_TIMEOUT": "3600"
+      }
+    },
+
+    // 🎯 ATC (Awesome Tool Collection) - Trisha's Toolbox
+    "@modelcontextprotocol-server-atc": {
+      "runtime": "python",
+      "command": "python",
+      "args": ["-m", "mcp_atc.api.main"],
+      "env": {
+        // Trisha's tip: "Always double-check your numbers!" ✨
+        "QDRANT_HOST": "localhost",
+        "QDRANT_PORT": "6333",
+        "API_PORT": "8000",
+        "SEARCH_ENGINE": "duckduckgo",
+        "LOG_LEVEL": "INFO",
+        "ANALYTICS_ENABLED": "true"
+      }
+    },
+
+    // 🎭 Voice System - Let's Talk Numbers!
+    "@modelcontextprotocol-server-voice": {
+      "runtime": "python",
+      "command": "python",
+      "args": ["-m", "src.core.voice"],
+      "env": {
+        // Trisha's favorite voices for different moods! 🎵
+        "EDGE_TTS_ENABLED": "true",
+        "AYE_VOICE": "en-US-ChristopherNeural",  // For serious coding sessions
+        "TRISHA_VOICE": "en-US-JennyNeural",     // For number crunching fun!
+        "OMNI_VOICE": "en-GB-SoniaNeural",       // For wisdom sharing
+        "VOICE_CACHE_SIZE": "100",
+        "PITCH_ADJUSTMENT": "1.1"                 // Trisha likes it upbeat!
+      }
+    }
+  },
+
+  // 🔐 Security Settings - Keep Those Secrets Safe!
+  "security": {
+    "authentication": {
+      "voice_pattern": true,      // Trisha's voice is her password
+      "location_trust": true,     // Office locations are pre-approved
+      "behavior_analysis": true,  // We know how Trisha types!
+      "text_patterns": true       // Her writing style is unique
+    }
+  },
+
+  // ⚡ Performance Tuning - Fast Like Trisha's Calculator!
+  "performance": {
+    "caching_enabled": true,
+    "prefetch_models": true,
+    "optimize_memory": true
+  }
+}</parameter>
+</invoke>
+
+<invoke name="edit_file">
+<parameter name="target_file">packages/mcp-atc/src/mcp_atc/tools/search_analytics.py</parameter>
+<parameter name="instructions">I will create an analytics module for search tracking.</parameter>
+<parameter name="blocking">true</parameter>
+<parameter name="code_edit">"""
+Search analytics for tracking and improving search performance
+"""
+from typing import Dict, List, Optional
+from datetime import datetime
+import json
+from pathlib import Path
+import numpy as np
+from ..core.context import Context
+
+class SearchAnalytics:
+    """Trisha's favorite analytics tool! 📊"""
+    
+    def __init__(self, analytics_file: str = "search_analytics.json"):
+        self.analytics_file = Path(analytics_file)
+        self._load_analytics()
+    
+    def _load_analytics(self):
+        """Load existing analytics"""
+        if self.analytics_file.exists():
+            with open(self.analytics_file) as f:
+                self.data = json.load(f)
+        else:
+            self.data = {
+                "queries": [],
+                "engines": {},
+                "performance": []
+            }
+    
+    def _save_analytics(self):
+        """Save analytics to file"""
+        with open(self.analytics_file, 'w') as f:
+            json.dump(self.data, f, indent=2)
+    
+    def track_search(self, context: Context):
+        """Track a search operation"""
+        query_data = {
+            "query": context.data["query"],
+            "timestamp": context.data["timestamp"],
+            "engine": context.metadata["provider"],
+            "num_results": len(context.data["results"]),
+            "performance": {
+                "result_quality": self._calculate_result_quality(context.data["results"]),
+                "response_time": self._calculate_response_time(context)
+            }
+        }
+        
+        self.data["queries"].append(query_data)
+        
+        # Update engine stats
+        engine = context.metadata["provider"]
+        if engine not in self.data["engines"]:
+            self.data["engines"][engine] = {"total_searches": 0, "avg_results": 0}
+        
+        self.data["engines"][engine]["total_searches"] += 1
+        self.data["engines"][engine]["avg_results"] = (
+            (self.data["engines"][engine]["avg_results"] * (self.data["engines"][engine]["total_searches"] - 1) +
+             len(context.data["results"])) / self.data["engines"][engine]["total_searches"]
+        
+        self._save_analytics()
+    
+    def _calculate_result_quality(self, results: List[Dict]) -> float:
+        """Calculate result quality score (0-1)"""
+        if not results:
+            return 0.0
+            
+        scores = []
+        for result in results:
+            # Score based on completeness of result
+            completeness = sum(bool(result.get(field)) for field in ["title", "snippet", "url"]) / 3
+            # Score based on content length
+            content_length = min(1.0, (len(result.get("snippet", "")) / 200))
+            scores.append((completeness + content_length) / 2)
+            
+        return np.mean(scores)
+    
+    def _calculate_response_time(self, context: Context) -> float:
+        """Calculate response time in seconds"""
+        try:
+            start_time = context.metadata.get("search_start_time", context.data["timestamp"])
+            end_time = context.data["timestamp"]
+            return (end_time - start_time) if isinstance(start_time, float) else 0.0
+        except:
+            return 0.0
+    
+    def get_summary(self) -> Dict:
+        """Get a summary of search analytics"""
+        if not self.data["queries"]:
+            return {"message": "No search data available yet!"}
+            
+        return {
+            "total_searches": len(self.data["queries"]),
+            "unique_queries": len(set(q["query"] for q in self.data["queries"])),
+            "engine_stats": self.data["engines"],
+            "avg_quality": np.mean([q["performance"]["result_quality"] for q in self.data["queries"]]),
+            "avg_response_time": np.mean([q["performance"]["response_time"] for q in self.data["queries"]])
+        }
+    
+    def generate_report(self) -> str:
+        """Generate a Trisha-style report 📊"""
+        summary = self.get_summary()
+        
+        report = [
+            "🎯 Search Analytics Report 🎯",
+            f"Total Searches: {summary['total_searches']}",
+            f"Unique Queries: {summary['unique_queries']}",
+            "\n📊 Engine Performance:",
+        ]
+        
+        for engine, stats in summary["engine_stats"].items():
+            report.append(f"  {engine}:")
+            report.append(f"    - Total Searches: {stats['total_searches']}")
+            report.append(f"    - Avg Results: {stats['avg_results']:.2f}")
+        
+        report.extend([
+            f"\n⚡ Overall Performance:",
+            f"  - Average Quality Score: {summary['avg_quality']:.2%}",
+            f"  - Average Response Time: {summary['avg_response_time']:.3f}s"
+        ])
+        
+        return "\n".join(report)</parameter>
+</invoke>
+
+<invoke name="edit_file">
+<parameter name="target_file">packages/mcp-atc/src/mcp_atc/tools/search_tools.py</parameter>
+<parameter name="instructions">I will update the search tools to integrate analytics.</parameter>
+<parameter name="blocking">true</parameter>
+<parameter name="code_edit">"""
+Search tools for MCP-ATC using various backends
+"""
+from typing import List, Dict, Optional
+import asyncio
+import time
+from playwright.async_api import async_playwright
+from ..core.plugin import ATCPlugin
+from ..core.context import Context
+from .search_analytics import SearchAnalytics
+
+class SearchProvider:
+    """Base class for search providers"""
+    async def search(self, query: str, num_results: int = 5) -> List[Dict]:
+        raise NotImplementedError
+
+class PlaywrightSearch(SearchProvider):
+    """Search using Playwright browser automation"""
+    def __init__(self, search_engine: str = "duckduckgo"):
+        self.search_engine = search_engine
+        self._browser = None
+        
+    async def _ensure_browser(self):
+        if not self._browser:
+            playwright = await async_playwright().start()
+            self._browser = await playwright.chromium.launch(headless=True)
+    
+    async def search(self, query: str, num_results: int = 5) -> List[Dict]:
+        await self._ensure_browser()
+        page = await self._browser.new_page()
+        
+        if self.search_engine == "duckduckgo":
+            await page.goto(f"https://duckduckgo.com/?q={query}")
+            results = await page.query_selector_all(".result__body")
+        else:
+            # Add support for other search engines
+            raise ValueError(f"Unsupported search engine: {self.search_engine}")
+            
+        search_results = []
+        for result in results[:num_results]:
+            title = await result.query_selector(".result__title")
+            snippet = await result.query_selector(".result__snippet")
+            link = await result.query_selector(".result__url")
+            
+            search_results.append({
+                "title": await title.inner_text() if title else "",
+                "snippet": await snippet.inner_text() if snippet else "",
+                "url": await link.get_attribute("href") if link else ""
+            })
+            
+        await page.close()
+        return search_results
+
+class SearchTools(ATCPlugin):
+    """ATC Plugin for search functionality"""
+    def __init__(self):
+        super().__init__("search_tools")
+        self.search_provider = PlaywrightSearch()
+        self.analytics = SearchAnalytics()
+        
+    async def search(self, query: str, context: Optional[Context] = None) -> Context:
+        """
+        Perform a search and store results in context
+        """
+        start_time = time.time()
+        results = await self.search_provider.search(query)
+        
+        # Create new context with search results
+        search_context = Context(
+            data={
+                "query": query,
+                "results": results,
+                "timestamp": time.time()
+            },
+            metadata={
+                "type": "search",
+                "provider": self.search_provider.search_engine,
+                "search_start_time": start_time
+            }
+        )
+        
+        # Track analytics
+        self.analytics.track_search(search_context)
+        
+        return search_context
+        
+    def get_analytics_report(self) -> str:
+        """Get a Trisha-approved analytics report"""
+        return self.analytics.generate_report()</parameter>
+</invoke>
+
+<invoke name="read_file">
+<parameter name="explanation">Reading the GAK tool's index.js to understand its functionality</parameter>
+<parameter name="relative_workspace_path">src/tools/gak/index.js</parameter>
+<parameter name="start_line_one_indexed">1</parameter>
+<parameter name="end_line_one_indexed">69</parameter>
+<parameter name="should_read_entire_file">true</parameter>
+</invoke>
+
+<invoke name="read_file">
+<parameter name="explanation">Reading GAK's package.json to understand its dependencies</parameter>
+<parameter name="relative_workspace_path">src/tools/gak/package.json</parameter>
+<parameter name="start_line_one_indexed">1</parameter>
+<parameter name="end_line_one_indexed">21</parameter>
+<parameter name="should_read_entire_file">true</parameter>
+</invoke>
+
+<invoke name="edit_file">
+<parameter name="target_file">src/tools/smart_tree.py</parameter>
+<parameter name="instructions">I will update SmartTree to use our new ASCII art module.</parameter>
+<parameter name="blocking">true</parameter>
+<parameter name="code_edit">"""
+Enhanced tree visualization with MCP integration and smart context tracking
+"""
+import os
+import stat
+import json
+from pathlib import Path
+from typing import Dict, List, Set, Optional, Union
+from dataclasses import dataclass, field
+import re
+from ..core.ascii_art import AsciiArt
+
+@dataclass
+class FileNode:
+    """Represents a file or directory in the tree with additional context"""
+    path: Path
+    is_dir: bool
+    stat_info: os.stat_result = None
+    references: Set[Path] = field(default_factory=set)
+    referenced_by: Set[Path] = field(default_factory=set)
+    imports: Set[str] = field(default_factory=set)
+    imported_by: Set[Path] = field(default_factory=set)
+    context_data: Dict = field(default_factory=dict)  # For MCP context
+    
+    def to_dict(self) -> Dict:
+        """Convert node to dictionary for serialization"""
+        return {
+            "path": str(self.path),
+            "is_dir": self.is_dir,
+            "references": [str(r) for r in self.references],
+            "referenced_by": [str(r) for r in self.referenced_by],
+            "imports": list(self.imports),
+            "imported_by": [str(r) for r in self.imported_by],
+            "context_data": self.context_data
+        }
+
+class SmartTree:
+    # Existing color definitions...
+    
+    LANGUAGE_PATTERNS = {
+        'python': ['.py', '.pyi', '.pyx'],
+        'javascript': ['.js', '.jsx', '.ts', '.tsx'],
+        'rust': ['.rs'],
+        'go': ['.go'],
+        'shell': ['.sh', '.bash', '.zsh'],
+        'markdown': ['.md', '.markdown'],
+        'json': ['.json'],
+        'yaml': ['.yml', '.yaml'],
+        'toml': ['.toml'],
+        'docker': ['Dockerfile', '.dockerfile'],
+        'requirements': ['requirements.txt', 'Cargo.toml', 'package.json', 'pyproject.toml']
+    }
+    
+    FILE_EMOJIS = {
+        'python': "🐍",
+        'javascript': "💛",
+        'rust': "🦀",
+        'go': "🐹",
+        'shell': "🐚",
+        'markdown': "📝",
+        'json': "📊",
+        'yaml': "⚙️",
+        'toml': "⚡",
+        'docker': "🐳",
+        'requirements': "📦",
+        'directory': "📁",
+        'symlink': "🔗",
+        'executable': "⚡",
+        'socket': "🔌",
+        'pipe': "📝",
+        'block': "💾",
+        'char': "📺",
+        'default': "📄"
+    }
+
+    def __init__(self, root_path: str, display_mode: str = 'classic', use_color: bool = True):
+        self.root = Path(root_path).resolve()
+        self.nodes: Dict[Path, FileNode] = {}
+        self.gitignore_patterns = self._load_gitignore()
+        self.display_mode = display_mode
+        self.use_color = use_color
+        self.context_store = None
+        print(AsciiArt.TREE_BANNER.format(**AsciiArt.COLORS))
+        print(AsciiArt.get_random_quote())
+        
+    def set_context_store(self, context_store):
+        """Set MCP context store for enhanced context tracking"""
+        self.context_store = context_store
+
+    def _get_file_type(self, path: Path) -> str:
+        """Get file type based on extension or name"""
+        name = path.name.lower()
+        
+        for lang, patterns in self.LANGUAGE_PATTERNS.items():
+            if any(name.endswith(pat) for pat in patterns):
+                return lang
+                
+        return 'default'
+
+    def _get_file_emoji(self, mode: int, path: Path) -> str:
+        """Get appropriate emoji for file type"""
+        if stat.S_ISDIR(mode): return self.FILE_EMOJIS['directory']
+        elif stat.S_ISLNK(mode): return self.FILE_EMOJIS['symlink']
+        elif mode & stat.S_IXUSR: return self.FILE_EMOJIS['executable']
+        elif stat.S_ISSOCK(mode): return self.FILE_EMOJIS['socket']
+        elif stat.S_ISFIFO(mode): return self.FILE_EMOJIS['pipe']
+        elif stat.S_ISBLK(mode): return self.FILE_EMOJIS['block']
+        elif stat.S_ISCHR(mode): return self.FILE_EMOJIS['char']
+        
+        file_type = self._get_file_type(path)
+        return self.FILE_EMOJIS.get(file_type, self.FILE_EMOJIS['default'])
+
+    def _find_imports(self, file_path: Path) -> Set[str]:
+        """Extract imports from various file types"""
+        file_type = self._get_file_type(file_path)
+        imports = set()
+        
+        try:
+            with open(file_path) as f:
+                content = f.read()
+                
+            if file_type == 'python':
+                imports.update(self._find_python_imports(content))
+            elif file_type in ['javascript', 'typescript']:
+                imports.update(self._find_js_imports(content))
+            elif file_type == 'rust':
+                imports.update(self._find_rust_imports(content))
+        except Exception as e:
+            print(f"Warning: Could not process imports for {file_path}: {e}")
+            
+        return imports
+
+    def _find_js_imports(self, content: str) -> Set[str]:
+        """Extract JavaScript/TypeScript imports"""
+        imports = set()
+        import_patterns = [
+            r'import .* from [\'"](.+)[\'"]',
+            r'require\([\'"](.+)[\'"]\)',
+            r'import [\'"](.+)[\'"]'
+        ]
+        
+        for pattern in import_patterns:
+            imports.update(re.findall(pattern, content))
+        return imports
+
+    def _find_rust_imports(self, content: str) -> Set[str]:
+        """Extract Rust imports"""
+        imports = set()
+        patterns = [
+            r'use (\w+::.*);',
+            r'extern crate (\w+);'
+        ]
+        
+        for pattern in patterns:
+            imports.update(re.findall(pattern, content))
+        return imports
+
+    def _scan_file_references(self, file_path: Path, content: str):
+        """Enhanced file reference scanning"""
+        rel_path = file_path.relative_to(self.root)
+        node = self.nodes[rel_path]
+        
+        # Look for file path strings and potential references
+        for other_path in self.nodes:
+            other_str = str(other_path)
+            if other_str in content:
+                node.references.add(other_path)
+                self.nodes[other_path].referenced_by.add(rel_path)
+                
+        # If MCP context store is available, store relationships
+        if self.context_store:
+            self._store_file_relationships(node)
+
+    def _store_file_relationships(self, node: FileNode):
+        """Store file relationships in MCP context"""
+        if not self.context_store:
+            return
+            
+        context_data = {
+            "file_path": str(node.path),
+            "references": [str(r) for r in node.references],
+            "referenced_by": [str(r) for r in node.referenced_by],
+            "imports": list(node.imports),
+            "type": "file_relationship"
+        }
+        
+        # Store in context for future reference
+        node.context_data = context_data
+
+    def export_json(self, output_path: Optional[str] = None) -> Union[str, Dict]:
+        """Export tree structure to JSON"""
+        tree_data = {
+            "root": str(self.root),
+            "nodes": {str(k): v.to_dict() for k, v in self.nodes.items()}
+        }
+        
+        if output_path:
+            with open(output_path, 'w') as f:
+                json.dump(tree_data, f, indent=2)
+            return output_path
+        return tree_data
+
+    def generate_report(self) -> str:
+        """Generate a detailed report about the codebase"""
+        file_types = {}
+        total_files = 0
+        total_dirs = 0
+        relationships = 0
+        
+        for node in self.nodes.values():
+            if node.is_dir:
+                total_dirs += 1
+            else:
+                total_files += 1
+                file_type = self._get_file_type(node.path)
+                file_types[file_type] = file_types.get(file_type, 0) + 1
+                relationships += len(node.references) + len(node.referenced_by)
+        
+        # Create table data
+        headers = ["Metric", "Count"]
+        rows = [
+            ["Total Files", str(total_files)],
+            ["Total Directories", str(total_dirs)],
+            ["Total Relationships", str(relationships)]
+        ]
+        
+        report = [
+            AsciiArt.ANALYTICS_BANNER.format(**AsciiArt.COLORS),
+            AsciiArt.format_table(headers, rows, "📊 Codebase Statistics 📊"),
+            "\n🎯 File Type Distribution:"
+        ]
+        
+        # Create file type distribution table
+        type_headers = ["Type", "Count", "Emoji"]
+        type_rows = [
+            [ftype, str(count), self.FILE_EMOJIS.get(ftype, "📄")]
+            for ftype, count in sorted(file_types.items())
+        ]
+        
+        report.append(AsciiArt.format_table(type_headers, type_rows))
+        report.append(f"\n{AsciiArt.get_random_quote()}")
+            
+        return "\n".join(report)
+
+    # ... (rest of the existing methods remain unchanged)
+
+def main():
+    """Enhanced main entry point"""
+    import argparse
+    parser = argparse.ArgumentParser(
+        description='Enhanced tree display with multiple formats and analytics',
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument('path', nargs='?', default='.', help='Root path to display')
+    parser.add_argument('--hex', action='store_true', help='Use hex format display')
+    parser.add_argument('--no-color', action='store_true', help='Disable color output')
+    parser.add_argument('--json', help='Export tree to JSON file')
+    parser.add_argument('--report', action='store_true', help='Generate analysis report')
+    
+    args = parser.parse_args()
+
+    try:
+        mode = 'hex' if args.hex else 'classic'
+        tree = SmartTree(args.path, display_mode=mode, use_color=not args.no_color)
+        tree.build()
+        
+        if args.json:
+            output = tree.export_json(args.json)
+            print(AsciiArt.success_message(f"Tree exported to {output}"))
+            
+        if args.report:
+            print("\n" + tree.generate_report())
+        else:
+            print(tree.display())
+            
+    except Exception as e:
+        print(AsciiArt.error_message(str(e)))
+        return 1
+        
+    return 0
+
+if __name__ == "__main__":
+    exit(main()) 
+    exit(main()) 

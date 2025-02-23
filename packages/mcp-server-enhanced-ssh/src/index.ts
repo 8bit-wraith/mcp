@@ -2,7 +2,9 @@ import { SSHService } from './services/ssh.service';
 import { Logger } from './utils/logger';
 
 async function main() {
-    const sshService = new SSHService();
+    const port = parseInt(process.env.SSH_PORT || '6480', 10);
+    const apiPort = parseInt(process.env.API_PORT || '6481', 10);
+    const sshService = new SSHService(port, apiPort);
     
     // Handle graceful shutdown
     process.on('SIGINT', async () => {

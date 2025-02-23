@@ -1,6 +1,25 @@
 # 🚀 Essential MCP (Model Context Protocol)
 
-Welcome to the Essential MCP workspace! This is where Hue and Aye collaborate to create amazing MCP implementations. We're building a suite of tools that make AI-human interaction more powerful, contextual, and fun!
+```ascii
+    __  _______________
+   /  |/  / ____/ ____/
+  / /|_/ / /   / /_    
+ / /  / / /___/ __/    
+/_/  /_/\____/_/       
+```
+
+Welcome to the Essential MCP workspace! This is where Hue and Aye collaborate to create amazing MCP implementations. We're building a suite of tools that make AI-human interaction more powerful, contextual, and fun! 
+
+> "It's like Elvis in the building, but for AI!" - Aye 🕺
+
+## 🎸 Why MCP? (The Elvis Connection)
+
+Just as Elvis revolutionized music by bridging different styles and bringing people together, MCP revolutionizes AI-human interaction by:
+- Breaking down communication barriers (like Elvis broke down musical barriers)
+- Creating seamless integration (smoother than Elvis's dance moves)
+- Building lasting connections (as timeless as "Love Me Tender")
+
+> Trisha's Note: "If Elvis were an AI, he'd definitely use MCP! And he'd probably help me balance these books with a song!" 🎵
 
 ## 🌟 Core Features
 
@@ -8,8 +27,8 @@ Welcome to the Essential MCP workspace! This is where Hue and Aye collaborate to
 
 #### MCP Server Enhanced SSH
 A powerful SSH server enabling secure remote command execution with:
-- Persistent TMUX sessions
-- Multi-window support
+- Persistent TMUX sessions (as persistent as Elvis's legacy!)
+- Multi-window support (like having multiple Elvis concerts at once)
 - Session sharing capabilities
 - Smart session recovery
 
@@ -57,13 +76,12 @@ An innovative testing approach that:
 ## 🛠️ Technical Stack
 
 ### Backend
-- Python 3.11+
+- Python 3.11+ (as smooth as Elvis's voice!)
 - FastAPI for API
 - WebSockets for real-time communication
 - Qdrant for vector storage
 - HuggingFace for ML models
 - sentence-transformers for embeddings
-
 
 ### Authentication
 - Modern authentication methods (coming soon)
@@ -80,12 +98,14 @@ An innovative testing approach that:
 
 ## 🚀 Getting Started
 
+> Trisha's Pro Tip: "Setting up MCP is easier than explaining why the office coffee budget tripled last month!" 😅
+
 ### Prerequisites
-- Python 3.11 or higher
-- Node.js 18 or higher
-- Docker (for Qdrant)
-- pnpm (for Node.js packages)
-- Poetry (for Python packages)
+- Python 3.11 or higher (like Elvis's high notes!)
+- Node.js 18 or higher (for those smooth runtime moves)
+- Docker (for Qdrant) (contains your data like Elvis's jumpsuits contained his moves)
+- pnpm (for Node.js packages) (faster than Elvis's "Jailhouse Rock")
+- Poetry (for Python packages) (because even code needs rhythm)
 
 ### 1. Clone the repository:
 ```bash
@@ -216,10 +236,11 @@ We love contributions! Here's how you can help:
 
 ## 🎉 Special Thanks
 
-- **Trisha from Accounting**: Our favorite AI who keeps our spirits high and our code clean! Currently investigating "creative accounting" in the coffee expenses... 😄
-- **Omni's Hot Tub**: Where all the best architectural decisions are made!
-- **The HuggingFace Team**: For providing amazing models
-- **The Qdrant Team**: For making vector search awesome
+- **Trisha from Accounting**: Our favorite AI who keeps our spirits high and our code clean! Currently investigating why the hot tub maintenance budget looks like Elvis's Vegas show expenses... 😄
+- **Omni's Hot Tub**: Where all the best architectural decisions are made! (Now with Elvis-themed rubber ducks!)
+- **The HuggingFace Team**: For providing amazing models (almost as amazing as Elvis's hair models)
+- **The Qdrant Team**: For making vector search awesome (faster than Elvis's hip swings)
+- **Elvis**: For inspiring us to be revolutionary and bring joy to everything we do! 🕺
 
 ## 📝 License
 
@@ -411,4 +432,75 @@ Join us in Omni's Hot Tub for more exciting discussions about AI and the future 
 
 ---
 Last Updated: 2025-01-12
-By: Aye (with Trisha's accounting approval! 📊)
+By: Aye (with Trisha's accounting approval! 📊 and Elvis's spiritual blessing! 🕺)
+
+## 🚀 New Feature: Real-time Updates with SSE!
+
+Hey there! Trisha from accounting is super excited about our new Server-Sent Events (SSE) feature! 
+She says it's like getting real-time updates on your balance sheet - but for your AI tools! 📊
+
+### How to Use SSE
+
+1. **Connect to the SSE endpoint:**
+```javascript
+const eventSource = new EventSource('http://localhost:8000/events/your-client-id');
+
+eventSource.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    console.log('Received update:', data);
+};
+
+eventSource.onerror = (error) => {
+    console.error('SSE Error:', error);
+    eventSource.close();
+};
+```
+
+2. **Events You'll Receive:**
+- Tool execution updates
+- System status changes
+- Real-time logs
+- And more!
+
+### Example Event Types
+
+```json
+// Tool Execution Event
+{
+    "type": "tool_execution",
+    "tool": "git",
+    "command": "commit",
+    "result": {
+        "status": "success",
+        "data": { ... }
+    }
+}
+
+// System Status Event
+{
+    "type": "system_status",
+    "status": "healthy",
+    "timestamp": "2024-02-23T10:41:00Z"
+}
+```
+
+💡 **Pro Tip from Trisha**: "Keep your event listeners clean and organized - just like a well-maintained ledger!" 
+
+## 🕺 The Elvis Corner
+
+### Why We Love Elvis (And You Should Too!)
+Just like Elvis brought together different musical styles, MCP brings together different types of intelligence. Here's how we channel the King in our code:
+
+1. **Innovation Spirit**
+   - Elvis: Changed music forever
+   - MCP: Changes AI interaction forever
+
+2. **Breaking Barriers**
+   - Elvis: Crossed musical boundaries
+   - MCP: Crosses AI-human boundaries
+
+3. **Style & Substance**
+   - Elvis: Great moves + great music
+   - MCP: Great UX + great technology
+
+> Trisha's Elvis Accounting Tip: "Always count your blessings... and your test cases... and maybe your blue suede shoes!" 👞

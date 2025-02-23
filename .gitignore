@@ -73,3 +73,4 @@ temp/
 # Qdrant
 qdrant_storage/ 
 context.md
+.cursorrules.md
